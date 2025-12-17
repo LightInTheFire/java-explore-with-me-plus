@@ -33,10 +33,9 @@ class ViewStatsDtoTest {
     @Test
     @DisplayName("Тест десериализации: JSON → объект")
     void deserialize_ShouldConvertFromJsonToObject() throws JsonProcessingException {
-        String json =
-            """
+        String json = """
             {
-            "app": "main-service",
+              "app": "main-service",
               "uri": "/events",
               "hits": 150
             }
