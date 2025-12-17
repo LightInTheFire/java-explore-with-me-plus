@@ -53,11 +53,14 @@ class EndpointHitDtoTest {
     @Test
     @DisplayName("Тест десериализации (JSON → объект)")
     void deserialize_ShouldConvertFromJsonToObject() throws JsonProcessingException {
-        String json = """
-            {"app": "stat-service",
+        String json =
+            """
+            {
+            "app": "stat-service",
               "uri": "/ping",
               "ip": "127.0.0.1",
-              "timestamp": "2025-12-17 15:45:30"}
+              "timestamp": "2025-12-17 15:45:30"
+              }
             """;
 
         EndpointHitDto dto = objectMapper.readValue(json, EndpointHitDto.class);
@@ -72,11 +75,14 @@ class EndpointHitDtoTest {
     @Test
     @DisplayName("Тест десериализации с неверным форматом даты")
     void deserialize_WithInvalidDateFormat_ShouldThrowException() {
-        String json = """
-              {"app": "service",
+        String json =
+              """
+              {
+              "app": "service",
               "uri": "/test",
               "ip": "1.2.3.4",
-              "timestamp": "17-12-2025 15:45"}
+              "timestamp": "17-12-2025 15:45"
+              }
             """;
 
         assertThrows(JsonProcessingException.class,
