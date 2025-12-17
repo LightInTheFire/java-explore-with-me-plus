@@ -65,13 +65,7 @@ class StatControllerTest {
     @Test
     @DisplayName("Тест POST /hit, отсутствует обязательное поле app")
     void createEndpointHit_WithInvalidDto_ShouldReturn400() throws Exception {
-        String invalidJson = """
-            {
-              "uri": "/test",
-              "ip": "127.0.0.1",
-              "timestamp": "2025-01-01 12:00:00"
-            }
-            """;
+        String invalidJson = "{\"uri\": \"/test\", \"ip\": \"127.0.0.1\", \"timestamp\": \"2025-01-01 12:00:00\"}";
 
         mockMvc.perform(post("/hit")
                         .contentType(MediaType.APPLICATION_JSON)
