@@ -34,11 +34,9 @@ class ViewStatsDtoTest {
     @DisplayName("Тест десериализации: JSON → объект")
     void deserialize_ShouldConvertFromJsonToObject() throws JsonProcessingException {
         String json = """
-            {
-              "app": "main-service",
+            {"app": "main-service",
               "uri": "/events",
-              "hits": 150
-            }
+              "hits": 150}
             """;
 
         ViewStatsDto dto = objectMapper.readValue(json, ViewStatsDto.class);
