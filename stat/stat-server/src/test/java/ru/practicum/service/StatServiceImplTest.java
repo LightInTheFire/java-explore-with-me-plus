@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +30,7 @@ class StatServiceImplTest {
     private StatServiceImpl statService;
 
     @Test
-    @DisplayName("Тест createEndpointHit с валидным Dto")
+    @DisplayName("Test createEndpointHit with valid Dto")
     void createEndpointHit_WithValidDto_ShouldSaveAndReturnMessage() {
         EndpointHitDto dto = new EndpointHitDto("app", "/uri", "1.2.3.4", LocalDateTime.now());
 
@@ -39,7 +40,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с валидными параметрами и unique=true")
+    @DisplayName("Test getStat with valid params and unique=true")
     void getStat_WithValidParamsAndUniqueTrue_ShouldCallUniqueRepoMethod() {
         LocalDateTime start = LocalDateTime.of(2025, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 12, 0);
@@ -56,7 +57,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с валидными параметрами и unique=false")
+    @DisplayName("Test getStat with valid params and unique=false")
     void getStat_WithValidParamsAndUniqueFalse_ShouldCallNotUniqueRepoMethod() {
         LocalDateTime start = LocalDateTime.of(2025, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 12, 0);
@@ -73,7 +74,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с некорректными датами - начало позже конца")
+    @DisplayName("Test getStat with invalid dates - start after end")
     void getStat_WithEndBeforeStart_ShouldThrowIllegalArgumentException() {
         LocalDateTime start = LocalDateTime.of(2025, 1, 2, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 10, 0);
@@ -86,7 +87,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с некорректными датами - начало равно концу")
+    @DisplayName("Test getStat with invalid dates - start equals end")
     void getStat_WithEndEqualToStart_ShouldThrowIllegalArgumentException() {
         LocalDateTime time = LocalDateTime.of(2025, 1, 1, 10, 0);
 
@@ -98,7 +99,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с пустым списком uris и unique=true")
+    @DisplayName("Test getStat with empty uris and unique=true")
     void getStat_WithEmptyUrisAndUniqueTrue_ShouldCallRepoWithUris() {
         LocalDateTime start = LocalDateTime.of(2025, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 12, 0);
@@ -115,7 +116,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с пустым списком uris и unique=false")
+    @DisplayName("Test getStat with empty uris and unique=false")
     void getStat_WithEmptyUrisAndUniqueFalse_ShouldCallRepoWithUris() {
         LocalDateTime start = LocalDateTime.of(2025, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 12, 0);
@@ -132,7 +133,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с null uris и unique=true")
+    @DisplayName("Test getStat with null uris and unique=true")
     void getStat_WithNullUrisAndUniqueTrue_ShouldCallRepoWithoutUris() {
         LocalDateTime start = LocalDateTime.of(2025, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 12, 0);
@@ -148,7 +149,7 @@ class StatServiceImplTest {
     }
 
     @Test
-    @DisplayName("Тест getStat с null uris и unique=false")
+    @DisplayName("Test getStat with null uris and unique=false")
     void getStat_WithNullUrisAndUniqueFalse_ShouldCallRepoWithoutUris() {
         LocalDateTime start = LocalDateTime.of(2025, 1, 1, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 12, 0);

@@ -42,7 +42,7 @@ class StatControllerTest {
     }
 
     @Test
-    @DisplayName("Тест POST /hit")
+    @DisplayName("Test POST /hit")
     void createEndpointHit_WithValidDto_ShouldReturn201() throws Exception {
         EndpointHitDto dto = EndpointHitDto.builder()
                 .app("app")
@@ -60,7 +60,7 @@ class StatControllerTest {
     }
 
     @Test
-    @DisplayName("Тест POST /hit, отсутствует обязательное поле app")
+    @DisplayName("Test POST /hit, missing required field app")
     void createEndpointHit_WithInvalidDto_ShouldReturn400() throws Exception {
         String invalidJson = "{\"uri\": \"/test\", \"ip\": \"127.0.0.1\", \"created\": \"2025-01-01 12:00:00\"}";
 
@@ -73,7 +73,7 @@ class StatControllerTest {
     }
 
     @Test
-    @DisplayName("Тест GET /stats")
+    @DisplayName("Test GET /stats")
     void getStats_WithValidParams_ShouldReturnStats() throws Exception {
         LocalDateTime start = LocalDateTime.of(2025, 1, 1, 10, 0, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 12, 0, 0);
@@ -98,7 +98,7 @@ class StatControllerTest {
     }
 
     @Test
-    @DisplayName("Тест GET /stats с дефолтным значением unique")
+    @DisplayName("Test GET /stats with default unique value")
     void getStats_WithMissingUrisAndUnique_ShouldUseDefaults() throws Exception {
         when(statService.getStat(any(), any(), isNull(), eq(false)))
                 .thenReturn(Collections.emptyList());
@@ -112,7 +112,7 @@ class StatControllerTest {
     }
 
     @Test
-    @DisplayName("Тест GET /stats с некорректным значением даты start")
+    @DisplayName("Test GET /stats with invalid start date format")
     void getStats_WithInvalidDateTimeFormat_ShouldReturn400() throws Exception {
         mockMvc.perform(get("/stats")
                         .param("start", "01-01-2025 10:00")
@@ -123,7 +123,7 @@ class StatControllerTest {
     }
 
     @Test
-    @DisplayName("Тест GET /stats с отсутствующим значением даты start")
+    @DisplayName("Test GET /stats with absent start value")
     void getStats_WithMissingStartParam_ShouldReturn400() throws Exception {
         mockMvc.perform(get("/stats")
                         .param("end", "2025-01-01 12:00:00"))
@@ -133,7 +133,7 @@ class StatControllerTest {
     }
 
     @Test
-    @DisplayName("Тест GET /stats с отсутствующим значением даты end")
+    @DisplayName("Test GET /stats with absent end value")
     void getStats_WithMissingEndParam_ShouldReturn400() throws Exception {
         mockMvc.perform(get("/stats")
                         .param("start", "2025-01-01 12:00:00"))

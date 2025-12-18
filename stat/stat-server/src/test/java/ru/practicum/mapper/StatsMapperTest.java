@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StatsMapperTest {
 
     @Test
-    @DisplayName("Маппинг из EndpointHitDto в EndpointHit")
+    @DisplayName("Mapping from EndpointHitDto to entity")
     void mapToEndpointHit_ShouldConvertDtoToEntityCorrectly() {
         LocalDateTime created = LocalDateTime.of(2025, 6, 15, 10, 30, 45);
         EndpointHitDto dto = new EndpointHitDto("stat-service", "/ping", "192.168.1.1", created);
