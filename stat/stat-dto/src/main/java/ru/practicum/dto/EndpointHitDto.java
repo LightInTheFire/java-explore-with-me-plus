@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 
 @Builder
 public record EndpointHitDto(
-        @NotBlank(message = "Идентификатор сервиса не может быть пустым")
+        @NotBlank(message = "Service name must not be blank")
         String app,
-        @NotBlank(message = "URI не может быть пустым")
+        @NotBlank(message = "URI must not be blank")
         String uri,
-        @NotBlank(message = "Ip не может быть пустым")
+        @NotBlank(message = "IP must not be blank")
         String ip,
-        @NotNull(message = "Дата просмотра не может быть пустой")
+        @NotNull(message = "View date must not be null")
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime timestamp
 ) {

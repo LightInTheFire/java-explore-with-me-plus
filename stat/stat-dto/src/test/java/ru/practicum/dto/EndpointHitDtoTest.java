@@ -31,7 +31,7 @@ class EndpointHitDtoTest {
     }
 
     @Test
-    @DisplayName("Тест сериализации (объект → JSON)")
+    @DisplayName("Serialization test (object → JSON)")
     void serialize_ShouldConvertToObjectToJson() throws JsonProcessingException {
         LocalDateTime now = LocalDateTime.of(2025, 6, 15, 10, 30, 45);
         EndpointHitDto dto = EndpointHitDto.builder()
@@ -51,7 +51,7 @@ class EndpointHitDtoTest {
     }
 
     @Test
-    @DisplayName("Тест десериализации (JSON → объект)")
+    @DisplayName("Deserialization test (JSON → object)")
     void deserialize_ShouldConvertFromJsonToObject() throws JsonProcessingException {
         String json = "{\"app\": \"stat-service\", \"uri\": \"/ping\", \"ip\": \"127.0.0.1\"," +
                 "\"timestamp\": \"2025-12-17 15:45:30\"}";
@@ -66,7 +66,7 @@ class EndpointHitDtoTest {
     }
 
     @Test
-    @DisplayName("Тест десериализации с неверным форматом даты")
+    @DisplayName("Deserialization test with wrong date format")
     void deserialize_WithInvalidDateFormat_ShouldThrowException() {
         String json = "{\"app\": \"service\", \"uri\": \"/test\", \"ip\": \"1.2.3.4\"," +
                 "\"created\": \"17-12-2025 15:45\"}";
@@ -76,7 +76,7 @@ class EndpointHitDtoTest {
     }
 
     @Test
-    @DisplayName("Тест валидации: все поля заполнены")
+    @DisplayName("Validation test: all fields are filled")
     void validate_WithValidData_ShouldHaveNoViolations() {
         EndpointHitDto dto = EndpointHitDto.builder()
                 .app("app")
@@ -91,7 +91,7 @@ class EndpointHitDtoTest {
     }
 
     @Test
-    @DisplayName("Тест валидации: app пустой")
+    @DisplayName("Validation test: app empty")
     void validate_WithBlankApp_ShouldHaveViolation() {
         EndpointHitDto dto = EndpointHitDto.builder()
                 .app("")
@@ -107,11 +107,11 @@ class EndpointHitDtoTest {
                 .anyMatch(v -> v.getPropertyPath().toString().equals("app")));
         assertTrue(violations.stream()
                 .anyMatch(v ->
-                        v.getMessage().contains("Идентификатор сервиса не может быть пустым")));
+                        v.getMessage().contains("Service name must not be blank")));
     }
 
     @Test
-    @DisplayName("Тест валидации: timestamp null")
+    @DisplayName("Validation test: timestamp null")
     void validate_WithNullTimestamp_ShouldHaveViolation() {
         EndpointHitDto dto = EndpointHitDto.builder()
                 .app("app")
@@ -127,11 +127,11 @@ class EndpointHitDtoTest {
                 .anyMatch(v -> v.getPropertyPath().toString().equals("timestamp")));
         assertTrue(violations.stream()
                 .anyMatch(v ->
-                        v.getMessage().contains("Дата просмотра не может быть пустой")));
+                        v.getMessage().contains("View date must not be null")));
     }
 
     @Test
-    @DisplayName("Тест валидации: все поля null/blank")
+    @DisplayName("Validation test: all fields null/blank")
     void validate_WithAllFieldsInvalid_ShouldHaveMultipleViolations() {
         EndpointHitDto dto = new EndpointHitDto(null, null,null,null);
 

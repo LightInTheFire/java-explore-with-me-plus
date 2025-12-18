@@ -18,7 +18,7 @@ class ViewStatsDtoTest {
     }
 
     @Test
-    @DisplayName("Тест сериализации: объект → JSON")
+    @DisplayName("Serialization test: object → JSON")
     void serialize_ShouldConvertToObjectToJson() throws JsonProcessingException {
         ViewStatsDto dto = new ViewStatsDto("main-service", "/events", 42L);
 
@@ -31,7 +31,7 @@ class ViewStatsDtoTest {
     }
 
     @Test
-    @DisplayName("Тест десериализации: JSON → объект")
+    @DisplayName("Deserialization test: JSON → object")
     void deserialize_ShouldConvertFromJsonToObject() throws JsonProcessingException {
         String json = "{\"app\": \"main-service\", \"uri\": \"/events\", \"hits\": 150}";
 
@@ -43,7 +43,7 @@ class ViewStatsDtoTest {
     }
 
     @Test
-    @DisplayName("Тест на обратимость")
+    @DisplayName("Reversibility test")
     void roundTripSerialization_ShouldPreserveData() throws JsonProcessingException {
         ViewStatsDto original = new ViewStatsDto("main-service", "/events", 100L);
 
