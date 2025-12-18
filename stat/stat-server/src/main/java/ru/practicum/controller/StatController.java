@@ -24,7 +24,7 @@ public class StatController {
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public void createEndpointHit(@RequestBody @Valid EndpointHitDto endpointHitDto) {
-        log.info("Получен запрос на добавление просмотра {} в базу статистики", endpointHitDto);
+        log.info("Create stats requested {}", endpointHitDto);
         statService.createEndpointHit(endpointHitDto);
     }
 
@@ -34,7 +34,7 @@ public class StatController {
             @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime end,
             @RequestParam(required = false) List<String> uris,
             @RequestParam(required = false, defaultValue = "false") Boolean unique) {
-        log.info("Получен запрос на просмотр статистики эндпоинтов {} уникальность {} за период с {} по {}",
+        log.info("Get stats requested for uris: {} unique: {} from: {} to: {}",
                 uris, unique, start, end);
         return statService.getStat(start, end, uris, unique);
     }

@@ -1,37 +1,40 @@
 package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
-import ru.practicum.exceptions.IllegalArgumentException;
+import ru.practicum.exception.IllegalArgumentException;
 import ru.practicum.repository.StatRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import static ru.practicum.mapper.EndpointHitMapper.mapToEndpointHit;
+import static ru.practicum.mapper.StatsMapper.mapToEntity;
 
 @Service
 @RequiredArgsConstructor
 public class StatServiceImpl implements StatService {
-    @Autowired
-    private StatRepository statRepository;
+    private final StatRepository statRepository;
 
     @Override
     @Transactional
     public void createEndpointHit(EndpointHitDto endpointHitDto) {
-        statRepository.save(mapToEndpointHit(endpointHitDto));
+        statRepository.save(mapToEntity(endpointHitDto));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Collection<ViewStatsDto> getStat(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+    public Collection<ViewStatsDto> getStat(
+            LocalDateTime start,
+            LocalDateTime end,
+            List<String> uris,
+            Boolean unique
+    ) {
         if (!end.isAfter(start)) {
-            throw new IllegalArgumentException("Дата начала должна быть раньше даты конца");
+            throw new IllegalArgumentException("The end date must be before start date.");
         }
 
         if (uris != null) {

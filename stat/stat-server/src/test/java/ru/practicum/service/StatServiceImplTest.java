@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
-import ru.practicum.exceptions.IllegalArgumentException;
+import ru.practicum.exception.IllegalArgumentException;
 import ru.practicum.repository.StatRepository;
 
 import java.time.LocalDateTime;
@@ -82,7 +82,7 @@ class StatServiceImplTest {
                 IllegalArgumentException.class,
                 () -> statService.getStat(start, end, null, false)
         );
-        assertEquals("Дата начала должна быть раньше даты конца", exception.getMessage());
+        assertEquals("The end date must be before start date.", exception.getMessage());
     }
 
     @Test
@@ -94,7 +94,7 @@ class StatServiceImplTest {
                 IllegalArgumentException.class,
                 () -> statService.getStat(time, time, null, false)
         );
-        assertEquals("Дата начала должна быть раньше даты конца", exception.getMessage());
+        assertEquals("The end date must be before start date.", exception.getMessage());
     }
 
     @Test

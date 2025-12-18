@@ -48,7 +48,7 @@ class StatControllerTest {
                 .app("app")
                 .uri("/uri")
                 .ip("1.2.3.4")
-                .created(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
+                .timestamp(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
                 .build();
 
         mockMvc.perform(post("/hit")

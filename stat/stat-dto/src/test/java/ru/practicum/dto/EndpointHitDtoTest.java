@@ -38,7 +38,7 @@ class EndpointHitDtoTest {
                 .app("ewm-main-service")
                 .uri("/events/1")
                 .ip("192.168.1.1")
-                .created(now)
+                .timestamp(now)
                 .build();
 
         String json = objectMapper.writeValueAsString(dto);
@@ -62,7 +62,7 @@ class EndpointHitDtoTest {
         assertEquals("/ping", dto.uri());
         assertEquals("127.0.0.1", dto.ip());
         assertEquals(LocalDateTime.of(2025, 12, 17, 15, 45, 30),
-                dto.created());
+                dto.timestamp());
     }
 
     @Test
@@ -82,7 +82,7 @@ class EndpointHitDtoTest {
                 .app("app")
                 .uri("/uri")
                 .ip("1.2.3.4")
-                .created(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
 
         Set<ConstraintViolation<EndpointHitDto>> violations = validator.validate(dto);
@@ -97,7 +97,7 @@ class EndpointHitDtoTest {
                 .app("")
                 .uri("/uri")
                 .ip("1.2.3.4")
-                .created(LocalDateTime.now())
+                .timestamp(LocalDateTime.now())
                 .build();
 
         Set<ConstraintViolation<EndpointHitDto>> violations = validator.validate(dto);
@@ -117,14 +117,14 @@ class EndpointHitDtoTest {
                 .app("app")
                 .uri("/uri")
                 .ip("1.2.3.4")
-                .created(null)
+                .timestamp(null)
                 .build();
 
         Set<ConstraintViolation<EndpointHitDto>> violations = validator.validate(dto);
 
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath().toString().equals("created")));
+                .anyMatch(v -> v.getPropertyPath().toString().equals("timestamp")));
         assertTrue(violations.stream()
                 .anyMatch(v ->
                         v.getMessage().contains("Дата просмотра не может быть пустой")));

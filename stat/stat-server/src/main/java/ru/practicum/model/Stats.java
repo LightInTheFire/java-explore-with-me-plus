@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "stat")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EndpointHit {
+public class Stats {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
