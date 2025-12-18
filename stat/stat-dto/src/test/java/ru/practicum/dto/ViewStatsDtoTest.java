@@ -37,9 +37,9 @@ class ViewStatsDtoTest {
 
         ViewStatsDto dto = objectMapper.readValue(json, ViewStatsDto.class);
 
-        assertEquals("main-service", dto.getApp());
-        assertEquals("/events", dto.getUri());
-        assertEquals(150L, dto.getHits());
+        assertEquals("main-service", dto.app());
+        assertEquals("/events", dto.uri());
+        assertEquals(150L, dto.hits());
     }
 
     @Test
@@ -50,8 +50,8 @@ class ViewStatsDtoTest {
         String json = objectMapper.writeValueAsString(original);
         ViewStatsDto deserialized = objectMapper.readValue(json, ViewStatsDto.class);
 
-        assertEquals(original.getApp(), deserialized.getApp());
-        assertEquals(original.getUri(), deserialized.getUri());
-        assertEquals(original.getHits(), deserialized.getHits());
+        assertEquals(original.app(), deserialized.app());
+        assertEquals(original.uri(), deserialized.uri());
+        assertEquals(original.hits(), deserialized.hits());
     }
 }

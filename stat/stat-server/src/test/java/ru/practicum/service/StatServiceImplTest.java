@@ -31,15 +31,10 @@ class StatServiceImplTest {
     @Test
     @DisplayName("Тест createEndpointHit с валидным Dto")
     void createEndpointHit_WithValidDto_ShouldSaveAndReturnMessage() {
-        EndpointHitDto dto = new EndpointHitDto();
-        dto.setApp("app");
-        dto.setUri("/uri");
-        dto.setIp("1.2.3.4");
-        dto.setCreated(LocalDateTime.now());
+        EndpointHitDto dto = new EndpointHitDto("app", "/uri", "1.2.3.4", LocalDateTime.now());
 
-        String result = statService.createEndpointHit(dto);
+        statService.createEndpointHit(dto);
 
-        assertEquals("Информация сохранена", result);
         verify(statRepository, times(1)).save(any());
     }
 
@@ -75,26 +70,6 @@ class StatServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(viewStatsDto, result.iterator().next());
         verify(statRepository, times(1)).getNotUniqueStatsWithUris(start, end, uris);
-    }
-
-    @Test
-    @DisplayName("Тест getStat с нулевой датой начала")
-    void getStat_WithNullStart_ShouldThrowIllegalArgumentException() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> statService.getStat(null, LocalDateTime.now(), null, false)
-        );
-        assertEquals("Даты должны быть определены", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("Тест getStat с нулевой датой конца")
-    void getStat_WithNullEnd_ShouldThrowIllegalArgumentException() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> statService.getStat(LocalDateTime.now(), null, null, false)
-        );
-        assertEquals("Даты должны быть определены", exception.getMessage());
     }
 
     @Test

@@ -14,12 +14,8 @@ class EndpointHitMapperTest {
     @Test
     @DisplayName("Маппинг из EndpointHitDto в EndpointHit")
     void mapToEndpointHit_ShouldConvertDtoToEntityCorrectly() {
-        LocalDateTime timestamp = LocalDateTime.of(2025, 6, 15, 10, 30, 45);
-        EndpointHitDto dto = new EndpointHitDto();
-        dto.setApp("stat-service");
-        dto.setUri("/ping");
-        dto.setIp("192.168.1.1");
-        dto.setCreated(timestamp);
+        LocalDateTime created = LocalDateTime.of(2025, 6, 15, 10, 30, 45);
+        EndpointHitDto dto = new EndpointHitDto("stat-service", "/ping", "192.168.1.1", created);
 
         EndpointHit entity = EndpointHitMapper.mapToEndpointHit(dto);
 
@@ -28,6 +24,6 @@ class EndpointHitMapperTest {
         assertEquals("stat-service", entity.getApp());
         assertEquals("/ping", entity.getUri());
         assertEquals("192.168.1.1", entity.getIp());
-        assertEquals(timestamp, entity.getCreated());
+        assertEquals(created, entity.getCreated());
     }
 }

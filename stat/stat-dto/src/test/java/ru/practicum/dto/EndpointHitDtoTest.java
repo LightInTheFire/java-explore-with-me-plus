@@ -47,29 +47,29 @@ class EndpointHitDtoTest {
         assertTrue(json.contains("\"app\":\"ewm-main-service\""));
         assertTrue(json.contains("\"uri\":\"/events/1\""));
         assertTrue(json.contains("\"ip\":\"192.168.1.1\""));
-        assertTrue(json.contains("\"timestamp\":\"2025-06-15 10:30:45\""));
+        assertTrue(json.contains("\"created\":\"2025-06-15 10:30:45\""));
     }
 
     @Test
     @DisplayName("Тест десериализации (JSON → объект)")
     void deserialize_ShouldConvertFromJsonToObject() throws JsonProcessingException {
         String json = "{\"app\": \"stat-service\", \"uri\": \"/ping\", \"ip\": \"127.0.0.1\"," +
-                "\"timestamp\": \"2025-12-17 15:45:30\"}";
+                "\"created\": \"2025-12-17 15:45:30\"}";
 
         EndpointHitDto dto = objectMapper.readValue(json, EndpointHitDto.class);
 
-        assertEquals("stat-service", dto.getApp());
-        assertEquals("/ping", dto.getUri());
-        assertEquals("127.0.0.1", dto.getIp());
+        assertEquals("stat-service", dto.app());
+        assertEquals("/ping", dto.uri());
+        assertEquals("127.0.0.1", dto.ip());
         assertEquals(LocalDateTime.of(2025, 12, 17, 15, 45, 30),
-                dto.getCreated());
+                dto.created());
     }
 
     @Test
     @DisplayName("Тест десериализации с неверным форматом даты")
     void deserialize_WithInvalidDateFormat_ShouldThrowException() {
         String json = "{\"app\": \"service\", \"uri\": \"/test\", \"ip\": \"1.2.3.4\"," +
-                "\"timestamp\": \"17-12-2025 15:45\"}";
+                "\"created\": \"17-12-2025 15:45\"}";
 
         assertThrows(JsonProcessingException.class,
                 () -> objectMapper.readValue(json, EndpointHitDto.class));
@@ -133,7 +133,7 @@ class EndpointHitDtoTest {
     @Test
     @DisplayName("Тест валидации: все поля null/blank")
     void validate_WithAllFieldsInvalid_ShouldHaveMultipleViolations() {
-        EndpointHitDto dto = new EndpointHitDto();
+        EndpointHitDto dto = new EndpointHitDto(null, null,null,null);
 
         Set<ConstraintViolation<EndpointHitDto>> violations = validator.validate(dto);
 

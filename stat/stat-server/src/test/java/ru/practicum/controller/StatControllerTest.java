@@ -51,13 +51,10 @@ class StatControllerTest {
                 .created(LocalDateTime.of(2025, 1, 1, 12, 0, 0))
                 .build();
 
-        when(statService.createEndpointHit(any(EndpointHitDto.class))).thenReturn("OK");
-
         mockMvc.perform(post("/hit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isCreated())
-                .andExpect(content().string("OK"));
+                .andExpect(status().isCreated());
 
         verify(statService, times(1)).createEndpointHit(any(EndpointHitDto.class));
     }
@@ -65,7 +62,7 @@ class StatControllerTest {
     @Test
     @DisplayName("Тест POST /hit, отсутствует обязательное поле app")
     void createEndpointHit_WithInvalidDto_ShouldReturn400() throws Exception {
-        String invalidJson = "{\"uri\": \"/test\", \"ip\": \"127.0.0.1\", \"timestamp\": \"2025-01-01 12:00:00\"}";
+        String invalidJson = "{\"uri\": \"/test\", \"ip\": \"127.0.0.1\", \"created\": \"2025-01-01 12:00:00\"}";
 
         mockMvc.perform(post("/hit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -130,6 +127,16 @@ class StatControllerTest {
     void getStats_WithMissingStartParam_ShouldReturn400() throws Exception {
         mockMvc.perform(get("/stats")
                         .param("end", "2025-01-01 12:00:00"))
+                .andExpect(status().isBadRequest());
+
+        verify(statService, never()).getStat(any(), any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Тест GET /stats с отсутствующим значением даты end")
+    void getStats_WithMissingEndParam_ShouldReturn400() throws Exception {
+        mockMvc.perform(get("/stats")
+                        .param("start", "2025-01-01 12:00:00"))
                 .andExpect(status().isBadRequest());
 
         verify(statService, never()).getStat(any(), any(), any(), any());

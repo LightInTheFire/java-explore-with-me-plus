@@ -23,9 +23,9 @@ public class StatController {
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createEndpointHit(@RequestBody @Valid EndpointHitDto endpointHitDto) {
+    public void createEndpointHit(@RequestBody @Valid EndpointHitDto endpointHitDto) {
         log.info("Получен запрос на добавление просмотра {} в базу статистики", endpointHitDto);
-        return statService.createEndpointHit(endpointHitDto);
+        statService.createEndpointHit(endpointHitDto);
     }
 
     @GetMapping("/stats")

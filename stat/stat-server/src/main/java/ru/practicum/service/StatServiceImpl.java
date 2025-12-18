@@ -3,6 +3,7 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.exceptions.IllegalArgumentException;
@@ -14,27 +15,26 @@ import java.util.List;
 
 import static ru.practicum.mapper.EndpointHitMapper.mapToEndpointHit;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class StatServiceImpl implements StatService {
     @Autowired
     private StatRepository statRepository;
 
     @Override
-    public String createEndpointHit(EndpointHitDto endpointHitDto) {
+    @Transactional
+    public void createEndpointHit(EndpointHitDto endpointHitDto) {
         statRepository.save(mapToEndpointHit(endpointHitDto));
-        return "Информация сохранена";
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<ViewStatsDto> getStat(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        if (start == null || end == null) {
-            throw new IllegalArgumentException("Даты должны быть определены");
-        } else if (!end.isAfter(start)) {
+        if (!end.isAfter(start)) {
             throw new IllegalArgumentException("Дата начала должна быть раньше даты конца");
         }
 
-        if (!(uris == null)) {
+        if (uris != null) {
             if (unique) {
                 return statRepository.getUniqueStatsWithUris(start, end, uris);
             } else {
