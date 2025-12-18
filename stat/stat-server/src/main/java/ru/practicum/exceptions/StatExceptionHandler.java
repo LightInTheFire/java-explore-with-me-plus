@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class StatExceptionHandler {
 
-    @ResponseStatus
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public StatError handleIllegalArgumentException(IllegalArgumentException e) {
         log.warn("Получено исключение: {}", e.getMessage(), e);
