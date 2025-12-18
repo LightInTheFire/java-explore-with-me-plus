@@ -1,6 +1,7 @@
 package ru.practicum.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -12,6 +13,6 @@ public record EndpointHitDto(@NotBlank(message = "Идентификатор с�
                              @NotBlank(message = "URI не может быть пустым") String uri,
                              @NotBlank(message = "Ip не может быть пустым") String ip,
                              @NotNull(message = "Дата просмотра не может быть пустой")
-                             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime created) {
-
+                             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                             @JsonProperty("timestamp") LocalDateTime created) {
 }

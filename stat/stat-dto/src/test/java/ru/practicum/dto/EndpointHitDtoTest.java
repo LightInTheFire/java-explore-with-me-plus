@@ -47,14 +47,14 @@ class EndpointHitDtoTest {
         assertTrue(json.contains("\"app\":\"ewm-main-service\""));
         assertTrue(json.contains("\"uri\":\"/events/1\""));
         assertTrue(json.contains("\"ip\":\"192.168.1.1\""));
-        assertTrue(json.contains("\"created\":\"2025-06-15 10:30:45\""));
+        assertTrue(json.contains("\"timestamp\":\"2025-06-15 10:30:45\""));
     }
 
     @Test
     @DisplayName("Тест десериализации (JSON → объект)")
     void deserialize_ShouldConvertFromJsonToObject() throws JsonProcessingException {
         String json = "{\"app\": \"stat-service\", \"uri\": \"/ping\", \"ip\": \"127.0.0.1\"," +
-                "\"created\": \"2025-12-17 15:45:30\"}";
+                "\"timestamp\": \"2025-12-17 15:45:30\"}";
 
         EndpointHitDto dto = objectMapper.readValue(json, EndpointHitDto.class);
 
