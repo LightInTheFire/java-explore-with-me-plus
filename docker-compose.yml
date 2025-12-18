@@ -63,7 +63,7 @@ services:
 
   ewm-db:
     image: postgres:17.7-alpine3.23
-    container_name: postgres-db
+    container_name: ewm-db
     restart: unless-stopped
     ports:
       - "13001:5432"
