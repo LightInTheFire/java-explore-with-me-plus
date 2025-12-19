@@ -2,25 +2,24 @@ FROM maven:3.9.11-amazoncorretto-21 AS builder
 WORKDIR /application
 
 COPY pom.xml ./
-COPY main-service/pom.xml main-service/pom.xml
 COPY stat/pom.xml stat/pom.xml
 COPY stat/stat-dto/pom.xml stat/stat-dto/pom.xml
 COPY stat/stat-client/pom.xml stat/stat-client/pom.xml
 COPY stat/stat-server/pom.xml stat/stat-server/pom.xml
+COPY main-service/pom.xml main-service/pom.xml
 
 ENV MAVEN_OPTS="-Dmaven.repo.local=/app/.m2/repository"
-RUN mvn dependency:go-offline -pl main-service -am -B
+RUN mvn dependency:go-offline -pl stat/stat-server -am -B
 
-COPY main-service/src main-service/src
 COPY stat stat
 
-RUN mvn clean package -pl main-service -am -DskipTests
+RUN mvn clean package -pl stat/stat-server -am -DskipTests
 
 
 FROM amazoncorretto:21.0.8-alpine AS layers
 WORKDIR /application
 
-COPY --from=builder /application/main-service/target/*.jar app.jar
+COPY --from=builder /application/stat/stat-server/target/*.jar app.jar
 RUN java -Djarmode=tools -jar app.jar extract --layers --destination extracted
 
 
