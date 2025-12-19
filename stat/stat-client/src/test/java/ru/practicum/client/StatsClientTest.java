@@ -4,9 +4,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import ru.practicum.controller.StatController;
 import ru.practicum.dto.EndpointHitDto;
 
 import java.time.LocalDateTime;
@@ -16,6 +18,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+@WebMvcTest(controllers = StatController.class)
 class StatsClientTest {
 
     private RestTemplate restTemplate;
