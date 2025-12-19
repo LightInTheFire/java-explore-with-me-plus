@@ -1,6 +1,9 @@
 package ru.practicum.client;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
@@ -9,9 +12,9 @@ import ru.practicum.dto.EndpointHitDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 class StatsClientTest {
 
@@ -51,11 +54,11 @@ class StatsClientTest {
     @Test
     void getStats_shouldBuildQueryWithUrisAndUnique() {
         String responseJson = """
-            [
-              {"app":"ewm-main-service","uri":"/events/1","hits":5},
-              {"app":"ewm-main-service","uri":"/events/2","hits":2}
-            ]
-            """;
+                [
+                  {"app":"ewm-main-service","uri":"/events/1","hits":5},
+                  {"app":"ewm-main-service","uri":"/events/2","hits":2}
+                ]
+                """;
 
         server.expect(requestTo(allOf(
                         startsWith("http://localhost:9090/stats?"),
