@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.dto.EndpointHitDto;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +25,7 @@ class StatsClientTest {
     void setUp() {
         restTemplate = new RestTemplate();
         server = MockRestServiceServer.createServer(restTemplate);
-        client = new StatsClient(restTemplate, "http://localhost:9090");
+        client = new StatsClientImpl(restTemplate, "http://localhost:9090");
     }
 
     @AfterEach
@@ -79,8 +78,8 @@ class StatsClientTest {
         );
 
         Assertions.assertEquals(2, res.size());
-        Assertions.assertEquals("/events/1", res.get(0).getUri());
-        Assertions.assertEquals(5L, res.get(0).getHits());
+        Assertions.assertEquals("/events/1", res.getFirst().uri());
+        Assertions.assertEquals(5L, res.getFirst().hits());
     }
 
     @Test
