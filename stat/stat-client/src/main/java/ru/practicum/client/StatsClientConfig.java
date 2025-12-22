@@ -14,7 +14,11 @@ public class StatsClientConfig {
     }
 
     @Bean
-    public StatsClient statsClient(RestTemplate statsRestTemplate, @Value("${stats-server.url}") String baseUrl) {
-        return new StatsClient(statsRestTemplate, baseUrl);
+    public StatsClient statsClient(
+            RestTemplate statsRestTemplate,
+            @Value("${stats-server.url}") String baseUrl,
+            @Value("${stats-server.app}") String app
+    ) {
+        return new StatsClientImpl(statsRestTemplate, baseUrl, app);
     }
 }

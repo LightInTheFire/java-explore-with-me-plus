@@ -4,13 +4,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import ru.practicum.controller.StatController;
 import ru.practicum.dto.EndpointHitDto;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +15,6 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@WebMvcTest(controllers = StatController.class)
 class StatsClientTest {
 
     private RestTemplate restTemplate;
@@ -29,7 +25,7 @@ class StatsClientTest {
     void setUp() {
         restTemplate = new RestTemplate();
         server = MockRestServiceServer.createServer(restTemplate);
-        client = new StatsClient(restTemplate, "http://localhost:9090");
+        client = new StatsClientImpl(restTemplate, "http://localhost:9090", "ewm-main-service");
     }
 
     @AfterEach
@@ -82,8 +78,8 @@ class StatsClientTest {
         );
 
         Assertions.assertEquals(2, res.size());
-        Assertions.assertEquals("/events/1", res.get(0).getUri());
-        Assertions.assertEquals(5L, res.get(0).getHits());
+        Assertions.assertEquals("/events/1", res.getFirst().getUri());
+        Assertions.assertEquals(5L, res.getFirst().getHits());
     }
 
     @Test
