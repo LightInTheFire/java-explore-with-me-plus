@@ -3,6 +3,7 @@ server:
 
 stats-server:
   url: http://localhost:9090
+  app: ${STATS_SERVER_APP:ewm-main-service}
 spring:
   application:
     name: stat-server
