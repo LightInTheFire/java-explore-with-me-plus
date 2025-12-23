@@ -25,7 +25,7 @@ class StatsClientTest {
     void setUp() {
         restTemplate = new RestTemplate();
         server = MockRestServiceServer.createServer(restTemplate);
-        client = new StatsClientImpl(restTemplate, "http://localhost:9090");
+        client = new StatsClientImpl(restTemplate, "http://localhost:9090", "ewm-main-service");
     }
 
     @AfterEach
