@@ -1,5 +1,6 @@
 package ru.practicum.client;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -16,10 +17,12 @@ public class StatsClientImpl implements StatsClient {
 
     private final RestTemplate restTemplate;
     private final String baseUrl;
+    private final String app;
 
-    public StatsClientImpl(RestTemplate restTemplate, String baseUrl) {
+    public StatsClientImpl(RestTemplate restTemplate, String baseUrl, String app) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        this.app = app;
     }
 
     @Override
@@ -30,6 +33,18 @@ public class StatsClientImpl implements StatsClient {
 
         HttpEntity<EndpointHitDto> request = new HttpEntity<>(dto, headers);
         restTemplate.exchange(url, HttpMethod.POST, request, Void.class);
+    }
+
+    @Override
+    public void hit(HttpServletRequest request) {
+        EndpointHitDto dto = EndpointHitDto.builder()
+                .app(app)
+                .uri(request.getRequestURI())
+                .ip(request.getRemoteAddr())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        hit(dto);
     }
 
     @Override
@@ -51,5 +66,4 @@ public class StatsClientImpl implements StatsClient {
         ViewStatsDto[] body = resp.getBody();
         return body == null ? List.of() : Arrays.asList(body);
     }
-
 }
