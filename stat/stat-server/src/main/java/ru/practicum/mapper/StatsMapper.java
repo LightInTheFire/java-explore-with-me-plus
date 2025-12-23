@@ -5,7 +5,8 @@ import ru.practicum.model.Stats;
 
 public class StatsMapper {
     public static Stats mapToEntity(EndpointHitDto endpointHitDto) {
-        return new Stats(null,
+        return new Stats(
+                null,
                 endpointHitDto.app(),
                 endpointHitDto.uri(),
                 endpointHitDto.ip(),

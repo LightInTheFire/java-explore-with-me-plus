@@ -1,16 +1,18 @@
 package ru.practicum.client;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-import ru.practicum.dto.EndpointHitDto;
-import ru.practicum.dto.ViewStatsDto;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
+
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class StatsClientImpl implements StatsClient {
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -37,22 +39,25 @@ public class StatsClientImpl implements StatsClient {
 
     @Override
     public void hit(HttpServletRequest request) {
-        EndpointHitDto dto = EndpointHitDto.builder()
-                .app(app)
-                .uri(request.getRequestURI())
-                .ip(request.getRemoteAddr())
-                .timestamp(LocalDateTime.now())
-                .build();
+        EndpointHitDto dto =
+                EndpointHitDto.builder()
+                        .app(app)
+                        .uri(request.getRequestURI())
+                        .ip(request.getRemoteAddr())
+                        .timestamp(LocalDateTime.now())
+                        .build();
 
         hit(dto);
     }
 
     @Override
-    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        UriComponentsBuilder b = UriComponentsBuilder.fromHttpUrl(baseUrl + "/stats")
-                .queryParam("start", start.format(FMT))
-                .queryParam("end", end.format(FMT))
-                .queryParam("unique", unique);
+    public List<ViewStatsDto> getStats(
+            LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        UriComponentsBuilder b =
+                UriComponentsBuilder.fromHttpUrl(baseUrl + "/stats")
+                        .queryParam("start", start.format(FMT))
+                        .queryParam("end", end.format(FMT))
+                        .queryParam("unique", unique);
 
         if (uris != null && !uris.isEmpty()) {
             for (String uri : uris) {

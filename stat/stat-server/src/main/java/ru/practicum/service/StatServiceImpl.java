@@ -1,18 +1,20 @@
 package ru.practicum.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.dto.EndpointHitDto;
-import ru.practicum.dto.ViewStatsDto;
-import ru.practicum.exception.IllegalArgumentException;
-import ru.practicum.repository.StatRepository;
+import static ru.practicum.mapper.StatsMapper.mapToEntity;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import static ru.practicum.mapper.StatsMapper.mapToEntity;
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
+import ru.practicum.exception.IllegalArgumentException;
+import ru.practicum.repository.StatRepository;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +30,7 @@ public class StatServiceImpl implements StatService {
     @Override
     @Transactional(readOnly = true)
     public Collection<ViewStatsDto> getStat(
-            LocalDateTime start,
-            LocalDateTime end,
-            List<String> uris,
-            Boolean unique
-    ) {
+            LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         if (!end.isAfter(start)) {
             throw new IllegalArgumentException("The end date must be before start date.");
         }

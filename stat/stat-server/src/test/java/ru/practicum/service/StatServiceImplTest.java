@@ -1,33 +1,32 @@
 package ru.practicum.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
+import ru.practicum.exception.IllegalArgumentException;
+import ru.practicum.repository.StatRepository;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.dto.EndpointHitDto;
-import ru.practicum.dto.ViewStatsDto;
-import ru.practicum.exception.IllegalArgumentException;
-import ru.practicum.repository.StatRepository;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StatServiceImplTest {
 
-    @Mock
-    private StatRepository statRepository;
+    @Mock private StatRepository statRepository;
 
-    @InjectMocks
-    private StatServiceImpl statService;
+    @InjectMocks private StatServiceImpl statService;
 
     @Test
     @DisplayName("Test createEndpointHit with valid Dto")
@@ -79,10 +78,10 @@ class StatServiceImplTest {
         LocalDateTime start = LocalDateTime.of(2025, 1, 2, 10, 0);
         LocalDateTime end = LocalDateTime.of(2025, 1, 1, 10, 0);
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> statService.getStat(start, end, null, false)
-        );
+        IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> statService.getStat(start, end, null, false));
         assertEquals("The end date must be before start date.", exception.getMessage());
     }
 
@@ -91,10 +90,10 @@ class StatServiceImplTest {
     void getStat_WithEndEqualToStart_ShouldThrowIllegalArgumentException() {
         LocalDateTime time = LocalDateTime.of(2025, 1, 1, 10, 0);
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> statService.getStat(time, time, null, false)
-        );
+        IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> statService.getStat(time, time, null, false));
         assertEquals("The end date must be before start date.", exception.getMessage());
     }
 

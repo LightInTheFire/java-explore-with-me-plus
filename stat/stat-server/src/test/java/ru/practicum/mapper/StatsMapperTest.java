@@ -1,13 +1,14 @@
 package ru.practicum.mapper;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import ru.practicum.dto.EndpointHitDto;
-import ru.practicum.model.Stats;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.model.Stats;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class StatsMapperTest {
 

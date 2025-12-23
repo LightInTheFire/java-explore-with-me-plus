@@ -17,8 +17,7 @@ public class StatsClientConfig {
     public StatsClient statsClient(
             RestTemplate statsRestTemplate,
             @Value("${stats-server.url}") String baseUrl,
-            @Value("${stats-server.app}") String app
-    ) {
+            @Value("${stats-server.app}") String app) {
         return new StatsClientImpl(statsRestTemplate, baseUrl, app);
     }
 }
