@@ -1,6 +1,7 @@
 package ru.practicum.user.repository;
 
 import java.util.Collection;
+import java.util.List;
 
 import ru.practicum.user.model.User;
 
