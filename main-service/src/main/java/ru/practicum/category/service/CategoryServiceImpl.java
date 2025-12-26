@@ -16,10 +16,12 @@ import ru.practicum.exception.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
@@ -36,28 +38,28 @@ public class CategoryServiceImpl implements CategoryService {
                 categoryRepository
                         .findById(catId)
                         .orElseThrow(
-                                () ->
-                                        new NotFoundException(
-                                                "Category with id=" + catId + " was not found"));
+                                NotFoundException.supplier(
+                                        "Category with id={} was not found", catId));
         category.setName(updateCategoryDto.name());
         return mapToDto(categoryRepository.save(category));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> getAllCategoriesPaged(int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
         return categoryRepository.findAll(pageable).stream().map(CategoryMapper::mapToDto).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto getCategoryById(Long id) {
         Category category =
                 categoryRepository
                         .findById(id)
                         .orElseThrow(
-                                () ->
-                                        new NotFoundException(
-                                                "Category with id=" + id + " was not found"));
+                                NotFoundException.supplier(
+                                        "Category with id={} was not found", id));
         return mapToDto(category);
     }
 
@@ -65,8 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategoryById(Long id) {
         categoryRepository
                 .findById(id)
-                .orElseThrow(
-                        () -> new NotFoundException("Category with id=" + id + " was not found"));
+                .orElseThrow(NotFoundException.supplier("Category with id={} was not found", id));
         categoryRepository.deleteById(id);
     }
 }
