@@ -6,10 +6,10 @@ stats-server:
   app: ${STATS_SERVER_APP:ewm-main-service}
 spring:
   application:
-    name: stat-server
+    name: ewm-service
 
   datasource:
-    url: jdbc:h2:mem:stat-db
+    url: jdbc:h2:mem:ewm-db
     driver-class-name: org.h2.Driver
     username: sa
     password:
