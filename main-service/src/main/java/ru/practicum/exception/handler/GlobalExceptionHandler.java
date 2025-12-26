@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.dto.ApiError;
 import ru.practicum.exception.dto.Violation;
 
@@ -75,6 +76,18 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 "Some fields of RequestBody for request are invalid",
                 HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public ApiError handleNotFoundException(NotFoundException e) {
+        log.warn("Not found: {}", e.getMessage());
+        return new ApiError(
+                List.of(e.getMessage()),
+                e.getMessage(),
+                "The required object was not found",
+                HttpStatus.NOT_FOUND.toString(),
                 LocalDateTime.now());
     }
 }
