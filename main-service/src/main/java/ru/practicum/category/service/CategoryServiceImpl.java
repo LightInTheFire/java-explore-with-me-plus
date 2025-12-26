@@ -1,8 +1,5 @@
 package ru.practicum.category.service;
 
-import static ru.practicum.category.mapper.CategoryMapper.mapToDto;
-import static ru.practicum.category.mapper.CategoryMapper.mapToEntity;
-
 import java.util.List;
 
 import ru.practicum.category.dto.CategoryDto;
@@ -28,8 +25,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
-        Category category = mapToEntity(newCategoryDto);
-        return mapToDto(categoryRepository.save(category));
+        Category category = CategoryMapper.mapToEntity(newCategoryDto);
+        return CategoryMapper.mapToDto(categoryRepository.save(category));
     }
 
     @Override
@@ -41,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
                                 NotFoundException.supplier(
                                         "Category with id=%d was not found", catId));
         category.setName(updateCategoryDto.name());
-        return mapToDto(categoryRepository.save(category));
+        return CategoryMapper.mapToDto(categoryRepository.save(category));
     }
 
     @Override
@@ -60,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
                         .orElseThrow(
                                 NotFoundException.supplier(
                                         "Category with id=%d was not found", id));
-        return mapToDto(category);
+        return CategoryMapper.mapToDto(category);
     }
 
     @Override
