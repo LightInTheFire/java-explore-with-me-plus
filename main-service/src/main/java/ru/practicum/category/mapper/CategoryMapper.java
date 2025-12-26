@@ -8,11 +8,11 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class CategoryMapper {
-    public static Category mapToEntity(NewCategoryDto newCategoryDto) {
+    public Category mapToEntity(NewCategoryDto newCategoryDto) {
         return new Category(null, newCategoryDto.name());
     }
 
-    public static CategoryDto mapToDto(Category category) {
+    public CategoryDto mapToDto(Category category) {
         return new CategoryDto(category.getId(), category.getName());
     }
 }

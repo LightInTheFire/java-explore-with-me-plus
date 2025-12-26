@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
                         .findById(catId)
                         .orElseThrow(
                                 NotFoundException.supplier(
-                                        "Category with id={} was not found", catId));
+                                        "Category with id=%d was not found", catId));
         category.setName(updateCategoryDto.name());
         return mapToDto(categoryRepository.save(category));
     }
@@ -59,7 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
                         .findById(id)
                         .orElseThrow(
                                 NotFoundException.supplier(
-                                        "Category with id={} was not found", id));
+                                        "Category with id=%d was not found", id));
         return mapToDto(category);
     }
 
@@ -67,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategoryById(Long id) {
         categoryRepository
                 .findById(id)
-                .orElseThrow(NotFoundException.supplier("Category with id={} was not found", id));
+                .orElseThrow(NotFoundException.supplier("Category with id=%d was not found", id));
         categoryRepository.deleteById(id);
     }
 }
