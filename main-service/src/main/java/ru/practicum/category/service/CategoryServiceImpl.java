@@ -1,0 +1,72 @@
+package ru.practicum.category.service;
+
+import static ru.practicum.category.mapper.CategoryMapper.mapToDto;
+import static ru.practicum.category.mapper.CategoryMapper.mapToEntity;
+
+import java.util.List;
+
+import ru.practicum.category.dto.CategoryDto;
+import ru.practicum.category.dto.NewCategoryDto;
+import ru.practicum.category.dto.UpdateCategoryDto;
+import ru.practicum.category.mapper.CategoryMapper;
+import ru.practicum.category.model.Category;
+import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.exception.NotFoundException;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class CategoryServiceImpl implements CategoryService {
+    private final CategoryRepository categoryRepository;
+
+    @Override
+    public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
+        Category category = mapToEntity(newCategoryDto);
+        return mapToDto(categoryRepository.save(category));
+    }
+
+    @Override
+    public CategoryDto updateCategory(Long catId, UpdateCategoryDto updateCategoryDto) {
+        Category category =
+                categoryRepository
+                        .findById(catId)
+                        .orElseThrow(
+                                () ->
+                                        new NotFoundException(
+                                                "Category with id=" + catId + " was not found"));
+        category.setName(updateCategoryDto.name());
+        return mapToDto(categoryRepository.save(category));
+    }
+
+    @Override
+    public List<CategoryDto> getAllCategoriesPaged(int from, int size) {
+        Pageable pageable = PageRequest.of(from, size);
+        return categoryRepository.findAll(pageable).stream().map(CategoryMapper::mapToDto).toList();
+    }
+
+    @Override
+    public CategoryDto getCategoryById(Long id) {
+        Category category =
+                categoryRepository
+                        .findById(id)
+                        .orElseThrow(
+                                () ->
+                                        new NotFoundException(
+                                                "Category with id=" + id + " was not found"));
+        return mapToDto(category);
+    }
+
+    @Override
+    public void deleteCategoryById(Long id) {
+        categoryRepository
+                .findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException("Category with id=" + id + " was not found"));
+        categoryRepository.deleteById(id);
+    }
+}
