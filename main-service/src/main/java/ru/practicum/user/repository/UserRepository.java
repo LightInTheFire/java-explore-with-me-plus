@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Collection<User> findAllByIdIn(Collection<Long> ids, Pageable pageable);
+    List<User> findAllByIdIn(Collection<Long> ids, Pageable pageable);
 }
