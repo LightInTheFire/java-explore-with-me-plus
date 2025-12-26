@@ -25,7 +25,7 @@ public class UserAdminController {
 
     @GetMapping()
     public Collection<UserDto> getUsersPaged(
-            @RequestParam List<Long> ids,
+            @RequestParam(required = false) List<Long> ids,
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size) {
         log.info("Get users requested with ids={} from={} size={}", ids, from, size);
