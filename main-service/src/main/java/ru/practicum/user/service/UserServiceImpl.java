@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Collection<UserDto> getUsersPaged(UsersGetRequest request) {
         Pageable pageable = PageRequest.of(request.from(), request.size());
 
