@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
-import ru.practicum.event.model.StateAction;
+import ru.practicum.event.model.UserStateAction;
 
 public record UpdateEventUserRequest(
         @Size(min = 20, max = 2000) String annotation,
@@ -16,8 +16,9 @@ public record UpdateEventUserRequest(
         Boolean paid,
         @PositiveOrZero Integer participantLimit,
         Boolean requestModeration,
-        StateAction stateAction,
-        @Size(min = 3, max = 120) String title) {
+        UserStateAction stateAction,
+        @Size(min = 3, max = 120) String title)
+        implements UpdatableEvent {
 
     public boolean hasAnnotation() {
         return annotation != null && !annotation.isBlank();
