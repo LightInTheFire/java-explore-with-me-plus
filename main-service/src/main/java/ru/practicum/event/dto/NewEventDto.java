@@ -2,16 +2,13 @@ package ru.practicum.event.dto;
 
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record NewEventDto(
         @NotBlank @Size(min = 20, max = 2000) String annotation,
         @NotNull Long category,
         @NotBlank @Size(min = 20, max = 7000) String description,
-        @NotNull LocalDateTime eventDate,
+        @NotNull @Future LocalDateTime eventDate,
         @NotNull LocationDto location,
         Boolean paid,
         @PositiveOrZero Integer participantLimit,
