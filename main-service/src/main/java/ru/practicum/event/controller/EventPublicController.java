@@ -43,11 +43,13 @@ public class EventPublicController {
                         sort,
                         from,
                         size);
+        log.info("Public get events requested with params= {}", getRequest);
         return eventService.getEvents(getRequest);
     }
 
     @GetMapping("/{eventId}")
     public EventFullDto getEventById(@PathVariable Long eventId) {
+        log.info("Public get event with eventId={} requested", eventId);
         return eventService.getById(eventId);
     }
 }
