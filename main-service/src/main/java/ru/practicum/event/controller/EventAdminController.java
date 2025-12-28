@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.UpdateEventAdminRequest;
 import ru.practicum.event.model.EventState;
@@ -34,12 +36,14 @@ public class EventAdminController {
         EventsAdminGetRequest getRequest =
                 new EventsAdminGetRequest(
                         users, states, categories, rangeStart, rangeEnd, from, size);
+        log.info("Admin get events requested with params= {}", getRequest);
         return eventService.getEvents(getRequest);
     }
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
-            @PathVariable Long eventId, @RequestBody UpdateEventAdminRequest updateRequest) {
+            @PathVariable Long eventId, @RequestBody @Valid UpdateEventAdminRequest updateRequest) {
+        log.info("Admin update event requested with body= {}", updateRequest);
         return eventService.updateEvent(eventId, updateRequest);
     }
 }
