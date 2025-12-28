@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.service.EventService;
@@ -48,8 +50,8 @@ public class EventPublicController {
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto getEventById(@PathVariable Long eventId) {
+    public EventFullDto getEventById(@PathVariable Long eventId, HttpServletRequest request) {
         log.info("Public get event with eventId={} requested", eventId);
-        return eventService.getById(eventId);
+        return eventService.getById(eventId, request);
     }
 }

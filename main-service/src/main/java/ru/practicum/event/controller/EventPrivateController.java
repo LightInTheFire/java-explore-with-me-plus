@@ -58,6 +58,6 @@ public class EventPrivateController {
                 userId,
                 eventId,
                 updateRequest);
-        return eventService.updateEventByUserById(userId, eventId, updateRequest);
+        return eventService.updateEventByUser(userId, eventId, updateRequest);
     }
 }
