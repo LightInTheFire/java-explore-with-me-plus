@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 
+import ru.practicum.exception.IllegalEventUpdateException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.exception.dto.ApiError;
@@ -102,6 +103,18 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 "Some fields of RequestBody for request are invalid",
                 HttpStatus.NOT_FOUND.toString(),
+                LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(IllegalEventUpdateException.class)
+    public ApiError handleIllegalEventUpdateException(IllegalEventUpdateException e) {
+        log.warn(e.getMessage(), e);
+        return new ApiError(
+                null,
+                e.getMessage(),
+                "Trying to update event that already Published or Canceled",
+                HttpStatus.CONFLICT.toString(),
                 LocalDateTime.now());
     }
 
