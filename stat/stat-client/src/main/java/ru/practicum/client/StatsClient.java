@@ -13,6 +13,8 @@ public interface StatsClient {
 
     void hit(HttpServletRequest request);
 
+    void hit(String ip, String uri);
+
     List<ViewStatsDto> getStats(
             LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique);
 }

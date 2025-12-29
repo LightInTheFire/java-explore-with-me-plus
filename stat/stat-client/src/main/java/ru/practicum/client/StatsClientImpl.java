@@ -51,6 +51,18 @@ public class StatsClientImpl implements StatsClient {
     }
 
     @Override
+    public void hit(String ip, String uri) {
+        EndpointHitDto dto =
+                EndpointHitDto.builder()
+                        .app(app)
+                        .uri(uri)
+                        .ip(ip)
+                        .timestamp(LocalDateTime.now())
+                        .build();
+        hit(dto);
+    }
+
+    @Override
     public List<ViewStatsDto> getStats(
             LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         UriComponentsBuilder b =
