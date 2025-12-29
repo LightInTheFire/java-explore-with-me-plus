@@ -71,7 +71,11 @@ public class EventServiceImpl implements EventService {
                 eventRepository.findAll(
                         EventRepository.createPredicate(getRequest), getRequest.getPageable());
 
-        statsClient.hit(getRequest.httpRequest());
+        String ip = getRequest.httpRequest().getRemoteAddr();
+
+        for (Event event : events.getContent()) {
+            statsClient.hit(ip, EVENTS_URI.formatted(event.getId()));
+        }
 
         LocalDateTime statsFrom =
                 getRequest.hasRangeStart() ? getRequest.rangeStart() : LocalDateTime.now();
