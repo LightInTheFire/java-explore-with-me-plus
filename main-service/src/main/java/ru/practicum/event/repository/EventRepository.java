@@ -1,5 +1,6 @@
 package ru.practicum.event.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import ru.practicum.event.model.Event;
@@ -49,6 +50,8 @@ public interface EventRepository
         QEvent event = QEvent.event;
         BooleanBuilder builder = new BooleanBuilder();
 
+        builder.and(event.state.eq(EventState.PUBLISHED));
+
         if (request.hasPaid()) {
             builder.and(event.paid.eq(request.paid()));
         }
@@ -71,6 +74,10 @@ public interface EventRepository
 
         if (request.hasRangeEnd()) {
             builder.and(event.eventDate.loe(request.rangeEnd()));
+        }
+
+        if (!(request.hasRangeStart() && request.hasRangeEnd())) {
+            builder.and(event.eventDate.goe(LocalDateTime.now()));
         }
 
         return builder;
