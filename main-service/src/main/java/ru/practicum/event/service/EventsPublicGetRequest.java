@@ -3,10 +3,13 @@ package ru.practicum.event.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import ru.practicum.event.controller.EventSortBy;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public record EventsPublicGetRequest(
         String text,
@@ -17,7 +20,8 @@ public record EventsPublicGetRequest(
         boolean onlyAvailable,
         EventSortBy sort,
         int from,
-        int size) {
+        int size,
+        HttpServletRequest httpRequest) {
 
     public boolean hasText() {
         return text != null && !text.isEmpty();
@@ -44,6 +48,9 @@ public record EventsPublicGetRequest(
     }
 
     public Pageable getPageable() {
+        if (EventSortBy.EVENT_DATE.equals(sort)) {
+            return PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "eventDate"));
+        }
         return PageRequest.of(from, size);
     }
 }

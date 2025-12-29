@@ -2,6 +2,7 @@ package ru.practicum.event.dto;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
@@ -11,7 +12,7 @@ public record UpdateEventAdminRequest(
         @Size(min = 20, max = 2000) String annotation,
         Long category,
         @Size(min = 20, max = 7000) String description,
-        LocalDateTime eventDate,
+        @Future LocalDateTime eventDate,
         LocationDto location,
         Boolean paid,
         @PositiveOrZero Integer participantLimit,
