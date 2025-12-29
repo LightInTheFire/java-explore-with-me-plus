@@ -10,6 +10,7 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.service.EventService;
 import ru.practicum.event.service.EventsPublicGetRequest;
+import ru.practicum.exception.ValidationException;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,8 @@ public class EventPublicController {
             @RequestParam(defaultValue = "false") boolean onlyAvailable,
             @RequestParam(required = false) EventSortBy sort,
             @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
         EventsPublicGetRequest getRequest =
                 new EventsPublicGetRequest(
                         text,
@@ -44,7 +46,13 @@ public class EventPublicController {
                         onlyAvailable,
                         sort,
                         from,
-                        size);
+                        size,
+                        request);
+        if (getRequest.hasRangeStart() && getRequest.hasRangeEnd()) {
+            if (getRequest.rangeEnd().isBefore(getRequest.rangeStart())) {
+                throw new ValidationException("End date must be before start date");
+            }
+        }
         log.info("Public get events requested with params= {}", getRequest);
         return eventService.getEvents(getRequest);
     }
