@@ -2,14 +2,14 @@ package ru.practicum.event.service;
 
 import java.util.Collection;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import ru.practicum.event.dto.*;
 
 public interface EventService {
-    EventFullDto getById(Long eventId);
+    EventFullDto getById(Long eventId, HttpServletRequest request);
 
     Collection<EventShortDto> getEvents(EventsPublicGetRequest getRequest);
-
-    EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateRequest);
 
     Collection<EventFullDto> getEvents(EventsAdminGetRequest getRequest);
 
@@ -19,6 +19,7 @@ public interface EventService {
 
     EventFullDto getByUserById(Long userId, Long eventId);
 
-    EventFullDto updateEventByUserById(
-            Long userId, Long eventId, UpdateEventUserRequest updateRequest);
+    EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateRequest);
+
+    EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateRequest);
 }
