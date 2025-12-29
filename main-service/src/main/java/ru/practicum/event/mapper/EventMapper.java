@@ -76,7 +76,7 @@ public class EventMapper {
                     event.setState(EventState.PUBLISHED);
                     event.setPublishedOn(LocalDateTime.now());
                 }
-                case REJECT_EVENT -> event.setState(EventState.CANCELLED);
+                case REJECT_EVENT -> event.setState(EventState.CANCELED);
             }
         }
 
@@ -88,7 +88,7 @@ public class EventMapper {
         if (updateDto.hasStateAction()) {
             switch (updateDto.stateAction()) {
                 case SEND_TO_REVIEW -> event.setState(EventState.PENDING);
-                case CANCEL_REVIEW -> event.setState(EventState.CANCELLED);
+                case CANCEL_REVIEW -> event.setState(EventState.CANCELED);
             }
         }
 
