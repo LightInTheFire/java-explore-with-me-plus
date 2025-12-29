@@ -34,8 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private static final Duration MIN_TIME_BEFORE_EVENT = Duration.ofHours(2);
     private static final LocalDateTime MINIMAL_LOCAL_DATE_TIME =
@@ -146,6 +146,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
         Location location = LocationMapper.mapToEntity(newEventDto.location());
         Category category = getCategoryByIdOrThrow(newEventDto.category());
@@ -177,6 +178,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateRequest) {
         Event event = getEventByIdOrThrow(eventId);
 
@@ -202,6 +204,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto updateEventByUser(
             Long userId, Long eventId, UpdateEventUserRequest updateRequest) {
         Event event = getEventByIdOrThrow(eventId);
