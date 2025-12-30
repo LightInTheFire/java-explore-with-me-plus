@@ -4,6 +4,7 @@ server:
 stats-server:
   url: http://localhost:9090
   app: ${STATS_SERVER_APP:ewm-main-service}
+
 spring:
   application:
     name: ewm-service
@@ -25,3 +26,10 @@ spring:
   sql:
     init:
       mode: embedded
+logging:
+  level:
+    org:
+      hibernate:
+        orm:
+          jdbc:
+            bind: trace
