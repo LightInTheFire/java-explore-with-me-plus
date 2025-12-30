@@ -48,9 +48,10 @@ public record EventsPublicGetRequest(
     }
 
     public Pageable getPageable() {
+        int page = from / size;
         if (EventSortBy.EVENT_DATE.equals(sort)) {
-            return PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "eventDate"));
+            return PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "eventDate"));
         }
-        return PageRequest.of(from, size);
+        return PageRequest.of(page, size);
     }
 }

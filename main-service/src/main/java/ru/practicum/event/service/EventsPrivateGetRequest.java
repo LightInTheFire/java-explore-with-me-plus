@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 public record EventsPrivateGetRequest(Long userId, int from, int size) {
 
     public Pageable getPageable() {
-        return PageRequest.of(from, size);
+        int page = from / size;
+        return PageRequest.of(page, size);
     }
 }

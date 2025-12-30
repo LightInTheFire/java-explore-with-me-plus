@@ -38,6 +38,7 @@ public record EventsAdminGetRequest(
     }
 
     public Pageable getPageable() {
-        return PageRequest.of(from, size);
+        int page = from / size;
+        return PageRequest.of(page, size);
     }
 }
