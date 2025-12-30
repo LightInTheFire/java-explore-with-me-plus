@@ -72,11 +72,7 @@ public class EventServiceImpl implements EventService {
                 eventRepository.findAll(
                         EventRepository.createPredicate(getRequest), getRequest.getPageable());
 
-        String ip = getRequest.httpRequest().getRemoteAddr();
-
-        for (Event event : events.getContent()) {
-            statsClient.hit(ip, EVENTS_URI.formatted(event.getId()));
-        }
+        statsClient.hit(getRequest.httpRequest());
 
         LocalDateTime statsFrom =
                 getRequest.hasRangeStart() ? getRequest.rangeStart() : LocalDateTime.now();
@@ -200,11 +196,9 @@ public class EventServiceImpl implements EventService {
         }
         EventMapper.updateEventFromDto(event, updateRequest, newCategory);
 
-        ViewStatsDto statsDto = getStatsForEvent(event, EVENTS_URI.formatted(eventId));
         Event saved = eventRepository.save(event);
 
-        return EventMapper.mapToFullDto(
-                saved, 0, statsDto.hits()); // change 0 to actual number of requests
+        return EventMapper.mapToFullDto(saved, 0, null); // change 0 to actual number of requests
     }
 
     @Override
@@ -232,11 +226,9 @@ public class EventServiceImpl implements EventService {
         }
         EventMapper.updateEventFromDto(event, updateRequest, newCategory);
 
-        ViewStatsDto statsDto = getStatsForEvent(event, EVENTS_URI.formatted(eventId));
         Event saved = eventRepository.save(event);
 
-        return EventMapper.mapToFullDto(
-                saved, 0, statsDto.hits()); // change 0 to actual number of requests
+        return EventMapper.mapToFullDto(saved, 0, null); // change 0 to actual number of requests
     }
 
     private Map<Long, Long> getStatsMapForEvents(
