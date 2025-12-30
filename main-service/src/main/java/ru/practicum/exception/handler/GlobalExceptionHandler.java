@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 
+import ru.practicum.exception.ForbiddenAccessException;
 import ru.practicum.exception.IllegalEventUpdateException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
@@ -115,6 +116,18 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 "Trying to update event that already Published or Canceled",
                 HttpStatus.CONFLICT.toString(),
+                LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ApiError handleForbiddenAccessException(ForbiddenAccessException e) {
+        log.warn(e.getMessage(), e);
+        return new ApiError(
+                null,
+                e.getMessage(),
+                "Forbidden",
+                HttpStatus.FORBIDDEN.toString(),
                 LocalDateTime.now());
     }
 
