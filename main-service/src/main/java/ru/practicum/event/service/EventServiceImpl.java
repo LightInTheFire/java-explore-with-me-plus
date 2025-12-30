@@ -19,6 +19,7 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.model.Location;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.exception.ForbiddenAccessException;
 import ru.practicum.exception.IllegalEventUpdateException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
@@ -166,10 +167,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getByUserById(Long userId, Long eventId) {
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        Event event =
-                eventOptional.orElseThrow(
-                        NotFoundException.supplier("Event with id=%d not found", eventId));
+        User user = getUserByIdOrThrow(userId);
+
+        Event event = getEventByIdOrThrow(eventId);
+
+        if (!event.getInitiator().getId().equals(user.getId())) {
+            throw new ForbiddenAccessException("You can't view event that's not yours");
+        }
 
         ViewStatsDto statsDto = getStatsForEvent(event, EVENTS_URI.formatted(eventId));
 
@@ -209,6 +213,10 @@ public class EventServiceImpl implements EventService {
             Long userId, Long eventId, UpdateEventUserRequest updateRequest) {
         Event event = getEventByIdOrThrow(eventId);
         User user = getUserByIdOrThrow(userId);
+
+        if (!event.getInitiator().getId().equals(user.getId())) {
+            throw new ForbiddenAccessException("You can't update event that's not yours");
+        }
 
         if ((event.getState().equals(EventState.PUBLISHED)
                         || event.getState().equals(EventState.CANCELED))
