@@ -9,18 +9,23 @@ import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 public class JsonConfig {
-    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private final DateTimeProperties properties;
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         return builder -> {
-            builder.simpleDateFormat(DATE_TIME_PATTERN);
+            builder.simpleDateFormat(properties.getDateTimeFormat());
             builder.serializers(
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)));
+                    new LocalDateTimeSerializer(
+                            DateTimeFormatter.ofPattern(properties.getDateTimeFormat())));
             builder.deserializers(
-                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)));
+                    new LocalDateTimeDeserializer(
+                            DateTimeFormatter.ofPattern(properties.getDateTimeFormat())));
         };
     }
 }
