@@ -1,4 +1,4 @@
-package ru.practicum.client;
+package ru.practicum.request;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

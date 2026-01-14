@@ -14,6 +14,7 @@ import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.exception.dto.ApiError;
 import ru.practicum.exception.dto.Violation;
+import ru.practicum.exception.ConflictException;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -140,6 +141,18 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 "Incorrect request",
                 HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictException.class)
+    public ApiError handleConflictException(ConflictException e) {
+        log.warn(e.getMessage(), e);
+        return new ApiError(
+                null,
+                e.getMessage(),
+                "Conflict",
+                HttpStatus.CONFLICT.toString(),
                 LocalDateTime.now());
     }
 }
