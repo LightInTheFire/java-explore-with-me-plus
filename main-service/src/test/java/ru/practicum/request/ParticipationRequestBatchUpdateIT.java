@@ -1,10 +1,10 @@
 package ru.practicum.request;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,20 +31,15 @@ import ru.practicum.user.repository.UserRepository;
 @Transactional
 class ParticipationRequestBatchUpdateIT {
 
-    @Autowired
-    private ParticipationRequestService requestService;
+    @Autowired private ParticipationRequestService requestService;
 
-    @Autowired
-    private ParticipationRequestRepository requestRepository;
+    @Autowired private ParticipationRequestRepository requestRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    @Autowired private CategoryRepository categoryRepository;
 
-    @Autowired
-    private EventRepository eventRepository;
+    @Autowired private EventRepository eventRepository;
 
     private User initiator;
     private User u1;

@@ -29,20 +29,15 @@ import ru.practicum.user.repository.UserRepository;
 @Transactional
 class ParticipationRequestServiceIT {
 
-    @Autowired
-    private ParticipationRequestService requestService;
+    @Autowired private ParticipationRequestService requestService;
 
-    @Autowired
-    private ParticipationRequestRepository requestRepository;
+    @Autowired private ParticipationRequestRepository requestRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    @Autowired private CategoryRepository categoryRepository;
 
-    @Autowired
-    private EventRepository eventRepository;
+    @Autowired private EventRepository eventRepository;
 
     private User initiator;
     private User requester;
