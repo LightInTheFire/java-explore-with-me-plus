@@ -1,16 +1,10 @@
 package ru.practicum.request;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
@@ -26,6 +20,12 @@ import ru.practicum.request.repository.ParticipationRequestRepository;
 import ru.practicum.request.service.ParticipationRequestService;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
@@ -74,8 +74,7 @@ class ParticipationRequestBatchUpdateIT {
                         initiator.getId(),
                         event.getId(),
                         new EventRequestStatusUpdateRequest(
-                                List.of(r1.id(), r2.id(), r3.id()),
-                                EventRequestStatus.CONFIRMED));
+                                List.of(r1.id(), r2.id(), r3.id()), EventRequestStatus.CONFIRMED));
 
         assertEquals(2, result.confirmedRequests().size());
         assertEquals(1, result.rejectedRequests().size());
@@ -83,8 +82,14 @@ class ParticipationRequestBatchUpdateIT {
         List<ParticipationRequestDto> all =
                 requestService.getEventRequestsByInitiator(initiator.getId(), event.getId());
 
-        long confirmed = all.stream().filter(r -> r.status().equals(EventRequestStatus.CONFIRMED.name())).count();
-        long rejected = all.stream().filter(r -> r.status().equals(EventRequestStatus.REJECTED.name())).count();
+        long confirmed =
+                all.stream()
+                        .filter(r -> r.status().equals(EventRequestStatus.CONFIRMED.name()))
+                        .count();
+        long rejected =
+                all.stream()
+                        .filter(r -> r.status().equals(EventRequestStatus.REJECTED.name()))
+                        .count();
 
         assertEquals(2, confirmed);
         assertEquals(1, rejected);
@@ -102,8 +107,7 @@ class ParticipationRequestBatchUpdateIT {
                         initiator.getId(),
                         event.getId(),
                         new EventRequestStatusUpdateRequest(
-                                List.of(r1.id(), r2.id()),
-                                EventRequestStatus.REJECTED));
+                                List.of(r1.id(), r2.id()), EventRequestStatus.REJECTED));
 
         assertEquals(0, result.confirmedRequests().size());
         assertEquals(2, result.rejectedRequests().size());
@@ -122,10 +126,11 @@ class ParticipationRequestBatchUpdateIT {
                 .state(state)
                 .initiator(initiator)
                 .category(category)
-                .location(Location.builder()
-                        .lat(BigDecimal.valueOf(55.755800))
-                        .lon(BigDecimal.valueOf(37.617300))
-                        .build())
+                .location(
+                        Location.builder()
+                                .lat(BigDecimal.valueOf(55.755800))
+                                .lon(BigDecimal.valueOf(37.617300))
+                                .build())
                 .build();
     }
 }
