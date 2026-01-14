@@ -1,9 +1,9 @@
 package ru.practicum.request;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,18 +77,14 @@ class ParticipationRequestServiceIT {
     void createRequest_shouldThrowConflict_whenEventNotPublished() {
         Event event = eventRepository.save(buildEvent(EventState.PENDING, 10, true));
 
-        assertThrows(
-                ConflictException.class,
-                () -> requestService.createRequest(requester.getId(), event.getId()));
+        assertThrows(ConflictException.class, () -> requestService.createRequest(requester.getId(), event.getId()));
     }
 
     @Test
     void createRequest_shouldThrowConflict_whenRequesterIsInitiator() {
         Event event = eventRepository.save(buildEvent(EventState.PUBLISHED, 10, true));
 
-        assertThrows(
-                ConflictException.class,
-                () -> requestService.createRequest(initiator.getId(), event.getId()));
+        assertThrows(ConflictException.class, () -> requestService.createRequest(initiator.getId(), event.getId()));
     }
 
     @Test
@@ -102,22 +98,6 @@ class ParticipationRequestServiceIT {
     }
 
     private Event buildEvent(EventState state, int participantLimit, boolean moderation) {
-        return Event.builder()
-                .title("title")
-                .annotation("ann")
-                .description("desc")
-                .createdOn(LocalDateTime.now().minusMinutes(1))
-                .eventDate(LocalDateTime.now().plusDays(1))
-                .paid(false)
-                .participantLimit(participantLimit)
-                .requestModeration(moderation)
-                .state(state)
-                .initiator(initiator)
-                .category(category)
-                .location(Location.builder()
-                        .lat(BigDecimal.valueOf(55.755800))
-                        .lon(BigDecimal.valueOf(37.617300))
-                        .build())
-                .build();
+        return Event.builder().title("title").annotation("ann").description("desc").createdOn(LocalDateTime.now().minusMinutes(1)).eventDate(LocalDateTime.now().plusDays(1)).paid(false).participantLimit(participantLimit).requestModeration(moderation).state(state).initiator(initiator).category(category).location(Location.builder().lat(BigDecimal.valueOf(55.755800)).lon(BigDecimal.valueOf(37.617300)).build()).build();
     }
 }
