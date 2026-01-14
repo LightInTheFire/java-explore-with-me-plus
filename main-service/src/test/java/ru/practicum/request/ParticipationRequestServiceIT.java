@@ -50,11 +50,8 @@ class ParticipationRequestServiceIT {
         userRepository.deleteAll();
         categoryRepository.deleteAll();
 
-        initiator =
-                userRepository.save(
-                        User.builder().name("init").email("init@mail.com").build());
-        requester =
-                userRepository.save(User.builder().name("req").email("req@mail.com").build());
+        initiator = userRepository.save(User.builder().name("init").email("init@mail.com").build());
+        requester = userRepository.save(User.builder().name("req").email("req@mail.com").build());
         category = categoryRepository.save(Category.builder().name("cat").build());
     }
 
