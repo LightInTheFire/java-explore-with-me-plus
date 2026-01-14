@@ -5,13 +5,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import ru.practicum.exception.ConflictException;
-import ru.practicum.exception.ForbiddenAccessException;
-import ru.practicum.exception.NotFoundException;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.exception.ConflictException;
+import ru.practicum.exception.ForbiddenAccessException;
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
@@ -53,7 +54,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConflictException("Event must be published");
         }
 
-        long confirmed = requestRepository.countByEvent_IdAndStatus(eventId, EventRequestStatus.CONFIRMED);
+        long confirmed =
+                requestRepository.countByEvent_IdAndStatus(eventId, EventRequestStatus.CONFIRMED);
         if (event.getParticipantLimit() != null
                 && event.getParticipantLimit() > 0
                 && confirmed >= event.getParticipantLimit()) {
@@ -144,7 +146,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (EventRequestStatus.REJECTED.equals(targetStatus)) {
             requests.forEach(r -> r.setStatus(EventRequestStatus.REJECTED));
             requestRepository.saveAll(requests);
-            return new EventRequestStatusUpdateResult(List.of(), ParticipationRequestMapper.toDtoList(requests));
+            return new EventRequestStatusUpdateResult(
+                    List.of(), ParticipationRequestMapper.toDtoList(requests));
         }
 
         throw new ConflictException("Unsupported status update: " + targetStatus);
@@ -157,10 +160,12 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (!moderation || limit == 0) {
             requests.forEach(r -> r.setStatus(EventRequestStatus.CONFIRMED));
             requestRepository.saveAll(requests);
-            return new EventRequestStatusUpdateResult(ParticipationRequestMapper.toDtoList(requests), List.of());
+            return new EventRequestStatusUpdateResult(
+                    ParticipationRequestMapper.toDtoList(requests), List.of());
         }
 
-        long confirmed = requestRepository.countByEvent_IdAndStatus(event.getId(), EventRequestStatus.CONFIRMED);
+        long confirmed =
+                requestRepository.countByEvent_IdAndStatus(event.getId(), EventRequestStatus.CONFIRMED);
         long available = limit - confirmed;
         if (available <= 0) {
             throw new ConflictException("Participant limit has been reached");
@@ -191,7 +196,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             List<ParticipationRequest> toReject =
                     pendingToReject.stream()
                             .filter(r -> !touched.contains(r.getId()))
-                            .toList();
+                            .collect(Collectors.toList());
             if (!toReject.isEmpty()) {
                 toReject.forEach(r -> r.setStatus(EventRequestStatus.REJECTED));
                 requestRepository.saveAll(toReject);
@@ -204,24 +209,33 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     private static Set<Long> idsOf(Collection<ParticipationRequest> requests) {
-        return requests.stream().map(ParticipationRequest::getId).collect(java.util.stream.Collectors.toSet());
+        return requests.stream().map(ParticipationRequest::getId).collect(Collectors.toSet());
     }
 
     private User getUserByIdOrThrow(Long userId) {
         return userRepository
                 .findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=%d not found".formatted(userId)));
+                .orElseThrow(
+                        () ->
+                                new NotFoundException(
+                                        "User with id=%d not found".formatted(userId)));
     }
 
     private Event getEventByIdOrThrow(Long eventId) {
         return eventRepository
                 .findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id=%d not found".formatted(eventId)));
+                .orElseThrow(
+                        () ->
+                                new NotFoundException(
+                                        "Event with id=%d not found".formatted(eventId)));
     }
 
     private ParticipationRequest getRequestByIdOrThrow(Long requestId) {
         return requestRepository
                 .findById(requestId)
-                .orElseThrow(() -> new NotFoundException("Request with id=%d not found".formatted(requestId)));
+                .orElseThrow(
+                        () ->
+                                new NotFoundException(
+                                        "Request with id=%d not found".formatted(requestId)));
     }
 }

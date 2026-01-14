@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 
+import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.ForbiddenAccessException;
 import ru.practicum.exception.IllegalEventUpdateException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.exception.dto.ApiError;
 import ru.practicum.exception.dto.Violation;
-import ru.practicum.exception.ConflictException;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -33,6 +33,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleException(Exception e) {
         log.error(e.getMessage(), e);
+
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public ApiError handleConstraintValidationException(ConstraintViolationException e) {
-        final List<Violation> violations =
+        List<Violation> violations =
                 e.getConstraintViolations().stream()
                         .map(
                                 violation ->
@@ -57,8 +58,10 @@ public class GlobalExceptionHandler {
                                                 violation.getPropertyPath().toString(),
                                                 violation.getMessage()))
                         .collect(Collectors.toList());
+
         log.warn(violations.toString());
-        List<String> errors = violations.stream().map(Violation::toString).toList();
+
+        List<String> errors = violations.stream().map(Violation::toString).collect(Collectors.toList());
         return new ApiError(
                 errors,
                 e.getMessage(),
@@ -70,12 +73,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiError handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        final List<Violation> violations =
+        List<Violation> violations =
                 e.getBindingResult().getFieldErrors().stream()
                         .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                         .collect(Collectors.toList());
+
         log.warn(violations.toString());
-        List<String> errors = violations.stream().map(Violation::toString).toList();
+
+        List<String> errors = violations.stream().map(Violation::toString).collect(Collectors.toList());
         return new ApiError(
                 errors,
                 e.getMessage(),
@@ -104,7 +109,7 @@ public class GlobalExceptionHandler {
                 null,
                 e.getMessage(),
                 "Some fields of RequestBody for request are invalid",
-                HttpStatus.NOT_FOUND.toString(),
+                HttpStatus.CONFLICT.toString(),
                 LocalDateTime.now());
     }
 
