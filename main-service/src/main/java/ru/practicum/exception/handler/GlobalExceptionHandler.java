@@ -61,7 +61,8 @@ public class GlobalExceptionHandler {
 
         log.warn(violations.toString());
 
-        List<String> errors = violations.stream().map(Violation::toString).collect(Collectors.toList());
+        List<String> errors =
+                violations.stream().map(Violation::toString).collect(Collectors.toList());
         return new ApiError(
                 errors,
                 e.getMessage(),
@@ -80,7 +81,8 @@ public class GlobalExceptionHandler {
 
         log.warn(violations.toString());
 
-        List<String> errors = violations.stream().map(Violation::toString).collect(Collectors.toList());
+        List<String> errors =
+                violations.stream().map(Violation::toString).collect(Collectors.toList());
         return new ApiError(
                 errors,
                 e.getMessage(),

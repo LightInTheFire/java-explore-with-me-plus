@@ -6,8 +6,7 @@ import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.model.ParticipationRequest;
 
 public final class ParticipationRequestMapper {
-    private ParticipationRequestMapper() {
-    }
+    private ParticipationRequestMapper() {}
 
     public static ParticipationRequestDto toDto(ParticipationRequest request) {
         if (request == null) {
