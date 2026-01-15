@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.request.StatsClient;
 import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.event.controller.EventSortBy;
 import ru.practicum.event.dto.*;
@@ -23,6 +22,7 @@ import ru.practicum.exception.ForbiddenAccessException;
 import ru.practicum.exception.IllegalEventUpdateException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
+import ru.practicum.request.StatsClient;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 

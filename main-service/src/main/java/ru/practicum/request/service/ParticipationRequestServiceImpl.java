@@ -109,7 +109,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         Event event = getEventByIdOrThrow(eventId);
 
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new ForbiddenAccessException("You can't view requests for event that is not yours");
+            throw new ForbiddenAccessException(
+                    "You can't view requests for event that is not yours");
         }
 
         return ParticipationRequestMapper.toDtoList(
@@ -124,11 +125,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         Event event = getEventByIdOrThrow(eventId);
 
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new ForbiddenAccessException("You can't update requests for event that is not yours");
+            throw new ForbiddenAccessException(
+                    "You can't update requests for event that is not yours");
         }
 
         Set<Long> ids = new HashSet<>(updateRequest.requestIds());
-        List<ParticipationRequest> requests = requestRepository.findAllByIdInAndEvent_Id(ids, eventId);
+        List<ParticipationRequest> requests =
+                requestRepository.findAllByIdInAndEvent_Id(ids, eventId);
         if (requests.size() != ids.size()) {
             throw new NotFoundException("Some requests were not found");
         }
@@ -153,7 +156,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         throw new ConflictException("Unsupported status update: " + targetStatus);
     }
 
-    private EventRequestStatusUpdateResult confirmRequests(Event event, List<ParticipationRequest> requests) {
+    private EventRequestStatusUpdateResult confirmRequests(
+            Event event, List<ParticipationRequest> requests) {
         int limit = event.getParticipantLimit() == null ? 0 : event.getParticipantLimit();
         boolean moderation = Boolean.TRUE.equals(event.getRequestModeration());
 
@@ -165,7 +169,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         long confirmed =
-                requestRepository.countByEvent_IdAndStatus(event.getId(), EventRequestStatus.CONFIRMED);
+                requestRepository.countByEvent_IdAndStatus(
+                        event.getId(), EventRequestStatus.CONFIRMED);
         long available = limit - confirmed;
         if (available <= 0) {
             throw new ConflictException("Participant limit has been reached");
@@ -190,7 +195,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         long nowConfirmed = confirmed + confirmedRequests.size();
         if (nowConfirmed >= limit) {
             List<ParticipationRequest> pendingToReject =
-                    requestRepository.findAllByEvent_IdAndStatus(event.getId(), EventRequestStatus.PENDING);
+                    requestRepository.findAllByEvent_IdAndStatus(
+                            event.getId(), EventRequestStatus.PENDING);
 
             Set<Long> touched = idsOf(requests);
             List<ParticipationRequest> toReject =
@@ -216,9 +222,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return userRepository
                 .findById(userId)
                 .orElseThrow(
-                        () ->
-                                new NotFoundException(
-                                        "User with id=%d not found".formatted(userId)));
+                        () -> new NotFoundException("User with id=%d not found".formatted(userId)));
     }
 
     private Event getEventByIdOrThrow(Long eventId) {
