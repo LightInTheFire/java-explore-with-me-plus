@@ -1,4 +1,4 @@
-package ru.practicum.request;
+package ru.practicum.client;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

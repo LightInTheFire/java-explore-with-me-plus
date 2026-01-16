@@ -1,4 +1,4 @@
-package ru.practicum.request;
+package ru.practicum.client;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;

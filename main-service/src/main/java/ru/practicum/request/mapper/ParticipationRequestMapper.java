@@ -5,10 +5,12 @@ import java.util.List;
 import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.model.ParticipationRequest;
 
-public final class ParticipationRequestMapper {
-    private ParticipationRequestMapper() {}
+import lombok.experimental.UtilityClass;
 
-    public static ParticipationRequestDto toDto(ParticipationRequest request) {
+@UtilityClass
+public class ParticipationRequestMapper {
+
+    public ParticipationRequestDto toDto(ParticipationRequest request) {
         if (request == null) {
             return null;
         }
@@ -20,7 +22,7 @@ public final class ParticipationRequestMapper {
                 request.getStatus().name());
     }
 
-    public static List<ParticipationRequestDto> toDtoList(List<ParticipationRequest> requests) {
+    public List<ParticipationRequestDto> toDtoList(List<ParticipationRequest> requests) {
         if (requests == null) {
             return List.of();
         }

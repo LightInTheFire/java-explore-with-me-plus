@@ -82,6 +82,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
         getUserByIdOrThrow(userId);
         return ParticipationRequestMapper.toDtoList(
@@ -104,6 +105,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getEventRequestsByInitiator(Long userId, Long eventId) {
         getUserByIdOrThrow(userId);
         Event event = getEventByIdOrThrow(eventId);

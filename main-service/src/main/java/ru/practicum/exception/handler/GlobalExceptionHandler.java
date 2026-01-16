@@ -6,131 +6,107 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 
-import ru.practicum.exception.ConflictException;
-import ru.practicum.exception.ForbiddenAccessException;
-import ru.practicum.exception.IllegalEventUpdateException;
-import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.ValidationException;
 import ru.practicum.exception.dto.ApiError;
-import ru.practicum.exception.dto.Violation;
+import ru.practicum.exception.*;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleException(Exception e) {
-        log.error(e.getMessage(), e);
-
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        String stackTrace = sw.toString();
+        e.printStackTrace(new PrintWriter(sw));
 
         return new ApiError(
-                List.of(stackTrace),
-                "An error occured while processing request",
+                List.of(sw.toString()),
+                "An error occurred while processing request",
                 "Exception",
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 LocalDateTime.now());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public ApiError handleConstraintValidationException(ConstraintViolationException e) {
-        List<Violation> violations =
-                e.getConstraintViolations().stream()
-                        .map(
-                                violation ->
-                                        new Violation(
-                                                violation.getPropertyPath().toString(),
-                                                violation.getMessage()))
-                        .collect(Collectors.toList());
-
-        log.warn(violations.toString());
-
-        List<String> errors =
-                violations.stream().map(Violation::toString).collect(Collectors.toList());
-        return new ApiError(
-                errors,
-                e.getMessage(),
-                "Some fields of RequestBody for request are invalid",
-                HttpStatus.BAD_REQUEST.toString(),
-                LocalDateTime.now());
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiError handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        List<Violation> violations =
-                e.getBindingResult().getFieldErrors().stream()
-                        .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
+    public ApiError handleConstraintViolationException(ConstraintViolationException e) {
+        List<String> errors =
+                e.getConstraintViolations().stream()
+                        .map(GlobalExceptionHandler::toViolationString)
                         .collect(Collectors.toList());
 
-        log.warn(violations.toString());
-
-        List<String> errors =
-                violations.stream().map(Violation::toString).collect(Collectors.toList());
         return new ApiError(
                 errors,
                 e.getMessage(),
-                "Some fields of RequestBody for request are invalid",
+                "Validation failed",
                 HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now());
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public ApiError handleNotFoundException(NotFoundException e) {
-        log.warn("Not found: {}", e.getMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<String> errors =
+                e.getBindingResult().getFieldErrors().stream()
+                        .map(GlobalExceptionHandler::toFieldErrorString)
+                        .collect(Collectors.toList());
+
+        return new ApiError(
+                errors,
+                e.getMessage(),
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler({ValidationException.class, IllegalEventUpdateException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleBadRequest(RuntimeException e) {
         return new ApiError(
                 null,
                 e.getMessage(),
-                "The required object was not found",
+                "Bad request",
+                HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleNotFound(NotFoundException e) {
+        return new ApiError(
+                null,
+                e.getMessage(),
+                "Not found",
                 HttpStatus.NOT_FOUND.toString(),
                 LocalDateTime.now());
     }
 
+    @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ApiError handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        log.warn(e.getMessage(), e);
+    public ApiError handleConflict(Exception e) {
         return new ApiError(
                 null,
                 e.getMessage(),
-                "Some fields of RequestBody for request are invalid",
+                "Data integrity violation",
                 HttpStatus.CONFLICT.toString(),
                 LocalDateTime.now());
     }
 
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(IllegalEventUpdateException.class)
-    public ApiError handleIllegalEventUpdateException(IllegalEventUpdateException e) {
-        log.warn(e.getMessage(), e);
-        return new ApiError(
-                null,
-                e.getMessage(),
-                "Trying to update event that already Published or Canceled",
-                HttpStatus.CONFLICT.toString(),
-                LocalDateTime.now());
-    }
-
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenAccessException.class)
-    public ApiError handleForbiddenAccessException(ForbiddenAccessException e) {
-        log.warn(e.getMessage(), e);
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiError handleForbidden(ForbiddenAccessException e) {
         return new ApiError(
                 null,
                 e.getMessage(),
@@ -139,27 +115,25 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now());
     }
 
+    @ExceptionHandler({
+        MissingServletRequestParameterException.class,
+        MethodArgumentTypeMismatchException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ValidationException.class)
-    public ApiError handleValidationException(ValidationException e) {
-        log.warn(e.getMessage(), e);
+    public ApiError handleRequestParamExceptions(Exception e) {
         return new ApiError(
                 null,
                 e.getMessage(),
-                "Incorrect request",
+                "Validation failed",
                 HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now());
     }
 
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(ConflictException.class)
-    public ApiError handleConflictException(ConflictException e) {
-        log.warn(e.getMessage(), e);
-        return new ApiError(
-                null,
-                e.getMessage(),
-                "Conflict",
-                HttpStatus.CONFLICT.toString(),
-                LocalDateTime.now());
+    private static String toViolationString(ConstraintViolation<?> violation) {
+        return violation.getPropertyPath() + ": " + violation.getMessage();
+    }
+
+    private static String toFieldErrorString(FieldError error) {
+        return error.getField() + ": " + error.getDefaultMessage();
     }
 }
