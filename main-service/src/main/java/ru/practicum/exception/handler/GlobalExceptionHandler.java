@@ -8,18 +8,18 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 
-import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import ru.practicum.exception.*;
 import ru.practicum.exception.dto.ApiError;
 import ru.practicum.exception.dto.Violation;
+import ru.practicum.exception.*;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,8 +29,8 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({
-            MissingServletRequestParameterException.class,
-            MethodArgumentTypeMismatchException.class
+        MissingServletRequestParameterException.class,
+        MethodArgumentTypeMismatchException.class
     })
     public ApiError handleRequestParamException(Exception e) {
         log.warn(e.getMessage(), e);
