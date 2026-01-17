@@ -27,6 +27,23 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiError handleException(Exception e) {
+        log.error(e.getMessage(), e);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+
+        return new ApiError(
+                List.of(stackTrace),
+                "An error occured while processing request",
+                "Exception",
+                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                LocalDateTime.now());
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({
         MissingServletRequestParameterException.class,
@@ -51,23 +68,6 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 "Conflict",
                 HttpStatus.CONFLICT.toString(),
-                LocalDateTime.now());
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiError handleException(Exception e) {
-        log.error(e.getMessage(), e);
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        String stackTrace = sw.toString();
-
-        return new ApiError(
-                List.of(stackTrace),
-                "An error occured while processing request",
-                "Exception",
-                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 LocalDateTime.now());
     }
 
