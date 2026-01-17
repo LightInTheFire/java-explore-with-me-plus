@@ -1,14 +1,15 @@
 package ru.practicum.compilation.controller;
 
+import java.util.Collection;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.service.CompilationsPublicGetRequest;
 import ru.practicum.compilation.service.CompilationsService;
 
-import java.util.Collection;
+import org.springframework.web.bind.annotation.*;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -18,11 +19,12 @@ public class CompilationsPublicController {
     private final CompilationsService compService;
 
     @GetMapping
-    public Collection<CompilationDto> getCompilations(@RequestParam boolean pinned,
-                                                     @RequestParam(defaultValue = "0") int from,
-                                                     @RequestParam(defaultValue = "10") int size
-    ) {
-        CompilationsPublicGetRequest getRequest = new CompilationsPublicGetRequest(pinned, from, size);
+    public Collection<CompilationDto> getCompilations(
+            @RequestParam(required = false) Boolean pinned,
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size) {
+        CompilationsPublicGetRequest getRequest =
+                new CompilationsPublicGetRequest(pinned, from, size);
         log.info("Public get compilations requested with params= {}", getRequest);
         return compService.findAll(getRequest);
     }

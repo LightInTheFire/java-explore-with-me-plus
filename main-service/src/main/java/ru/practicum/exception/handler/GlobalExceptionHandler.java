@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 
-import ru.practicum.exception.*;
 import ru.practicum.exception.dto.ApiError;
 import ru.practicum.exception.dto.Violation;
+import ru.practicum.exception.*;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

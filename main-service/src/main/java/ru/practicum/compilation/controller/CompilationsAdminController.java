@@ -1,14 +1,17 @@
 package ru.practicum.compilation.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.service.CompilationsService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -19,8 +22,7 @@ public class CompilationsAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto saveCompilation(
-            @RequestBody @Valid NewCompilationDto newCompilationDto) {
+    public CompilationDto saveCompilation(@RequestBody @Valid NewCompilationDto newCompilationDto) {
         log.info("Admin save compilation requested with body={}", newCompilationDto);
         return compService.save(newCompilationDto);
     }
@@ -33,8 +35,8 @@ public class CompilationsAdminController {
     }
 
     @PatchMapping("/{compId}")
-    public CompilationDto updateCompilation(@PathVariable long compId,
-                                            @RequestBody @Valid UpdateCompilationRequest updateRequest) {
+    public CompilationDto updateCompilation(
+            @PathVariable long compId, @RequestBody @Valid UpdateCompilationRequest updateRequest) {
         log.info("Admin update compilation requested with id={}, body={}", compId, updateRequest);
         return compService.update(compId, updateRequest);
     }
