@@ -8,19 +8,18 @@ import java.util.stream.Collectors;
 
 import jakarta.validation.ConstraintViolationException;
 
-import ru.practicum.exception.ForbiddenAccessException;
-import ru.practicum.exception.IllegalEventUpdateException;
-import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.ValidationException;
 import ru.practicum.exception.dto.ApiError;
 import ru.practicum.exception.dto.Violation;
+import ru.practicum.exception.*;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,6 +41,33 @@ public class GlobalExceptionHandler {
                 "An error occured while processing request",
                 "Exception",
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({
+        MissingServletRequestParameterException.class,
+        MethodArgumentTypeMismatchException.class
+    })
+    public ApiError handleRequestParamException(Exception e) {
+        log.warn(e.getMessage(), e);
+        return new ApiError(
+                null,
+                e.getMessage(),
+                "Incorrect request",
+                HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictException.class)
+    public ApiError handleConflictException(ConflictException e) {
+        log.warn(e.getMessage(), e);
+        return new ApiError(
+                null,
+                e.getMessage(),
+                "Conflict",
+                HttpStatus.CONFLICT.toString(),
                 LocalDateTime.now());
     }
 
