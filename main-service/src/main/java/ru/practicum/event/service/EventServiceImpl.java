@@ -23,6 +23,7 @@ import ru.practicum.exception.ForbiddenAccessException;
 import ru.practicum.exception.IllegalEventUpdateException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
+import ru.practicum.request.repository.ParticipationRequestRepository;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
@@ -41,13 +42,12 @@ public class EventServiceImpl implements EventService {
     private static final Duration MIN_TIME_BEFORE_EVENT = Duration.ofHours(2);
     private static final LocalDateTime MINIMAL_LOCAL_DATE_TIME =
             LocalDateTime.of(1000, 1, 1, 0, 0, 0);
-    private static final LocalDateTime MAXIMUM_LOCAL_DATE_TIME =
-            LocalDateTime.of(9999, 1, 1, 0, 0, 0);
     private static final String EVENTS_URI = "/events/%d";
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final StatsClient statsClient;
+    private final ParticipationRequestRepository requestRepository;
 
     @Override
     public EventFullDto getById(Long eventId, HttpServletRequest request) {
@@ -62,8 +62,10 @@ public class EventServiceImpl implements EventService {
 
         ViewStatsDto statsDto = getStatsForEvent(event, uri);
 
+        Map<Long, Long> confirmedRequests = getConfirmedRequests(Set.of(event));
+
         return EventMapper.mapToFullDto(
-                event, 0, statsDto.hits()); // change 0 to actual number of requests
+                event, confirmedRequests.getOrDefault(event.getId(), 0L), statsDto.hits());
     }
 
     @Override
@@ -74,12 +76,10 @@ public class EventServiceImpl implements EventService {
 
         statsClient.hit(getRequest.httpRequest());
 
-        LocalDateTime statsFrom =
-                getRequest.hasRangeStart() ? getRequest.rangeStart() : LocalDateTime.now();
-        LocalDateTime statsTo =
-                getRequest.hasRangeEnd() ? getRequest.rangeEnd() : MAXIMUM_LOCAL_DATE_TIME;
+        Map<Long, Long> statsForEvents = getStatsMapForEvents(events);
 
-        Map<Long, Long> statsForEvents = getStatsMapForEvents(events, statsFrom, statsTo);
+        Map<Long, Long> confirmedRequests =
+                getConfirmedRequests(events.stream().collect(Collectors.toSet()));
 
         List<EventShortDto> eventsList =
                 events.stream()
@@ -87,10 +87,8 @@ public class EventServiceImpl implements EventService {
                                 event ->
                                         EventMapper.mapToShortDto(
                                                 event,
-                                                0,
-                                                statsForEvents.get(
-                                                        event.getId()))) // change 0 to actual
-                        // number of requests
+                                                confirmedRequests.getOrDefault(event.getId(), 0L),
+                                                statsForEvents.get(event.getId())))
                         .toList();
 
         if (EventSortBy.VIEWS.equals(getRequest.sort())) {
@@ -106,18 +104,18 @@ public class EventServiceImpl implements EventService {
                 eventRepository.findAll(
                         EventRepository.createPredicate(getRequest), getRequest.getPageable());
 
-        Map<Long, Long> statsForEvents =
-                getStatsMapForEvents(events, MINIMAL_LOCAL_DATE_TIME, MAXIMUM_LOCAL_DATE_TIME);
+        Map<Long, Long> statsForEvents = getStatsMapForEvents(events);
+
+        Map<Long, Long> confirmedRequests =
+                getConfirmedRequests(events.stream().collect(Collectors.toSet()));
 
         return events.stream()
                 .map(
                         event ->
                                 EventMapper.mapToFullDto(
                                         event,
-                                        0,
-                                        statsForEvents.get(
-                                                event.getId()))) // change 0 to actual number of
-                // requests
+                                        confirmedRequests.getOrDefault(event.getId(), 0L),
+                                        statsForEvents.get(event.getId())))
                 .toList();
     }
 
@@ -127,18 +125,18 @@ public class EventServiceImpl implements EventService {
         Page<Event> events =
                 eventRepository.findByInitiator_Id(getRequest.userId(), getRequest.getPageable());
 
-        Map<Long, Long> statsForEvents =
-                getStatsMapForEvents(events, MINIMAL_LOCAL_DATE_TIME, MAXIMUM_LOCAL_DATE_TIME);
+        Map<Long, Long> statsForEvents = getStatsMapForEvents(events);
+
+        Map<Long, Long> confirmedRequests =
+                getConfirmedRequests(events.stream().collect(Collectors.toSet()));
 
         return events.stream()
                 .map(
                         event ->
                                 EventMapper.mapToShortDto(
                                         event,
-                                        0,
-                                        statsForEvents.get(
-                                                event.getId()))) // change 0 to actual number of
-                // requests
+                                        confirmedRequests.getOrDefault(event.getId(), 0L),
+                                        statsForEvents.get(event.getId())))
                 .toList();
     }
 
@@ -173,8 +171,10 @@ public class EventServiceImpl implements EventService {
 
         ViewStatsDto statsDto = getStatsForEvent(event, EVENTS_URI.formatted(eventId));
 
+        Map<Long, Long> confirmedRequests = getConfirmedRequests(Set.of(event));
+
         return EventMapper.mapToFullDto(
-                event, 0, statsDto.hits()); // change 0 to actual number of requests
+                event, confirmedRequests.getOrDefault(event.getId(), 0L), statsDto.hits());
     }
 
     @Override
@@ -198,7 +198,10 @@ public class EventServiceImpl implements EventService {
 
         Event saved = eventRepository.save(event);
 
-        return EventMapper.mapToFullDto(saved, 0, null); // change 0 to actual number of requests
+        Map<Long, Long> confirmedRequests = getConfirmedRequests(Set.of(event));
+
+        return EventMapper.mapToFullDto(
+                saved, confirmedRequests.getOrDefault(event.getId(), 0L), null);
     }
 
     @Override
@@ -228,14 +231,16 @@ public class EventServiceImpl implements EventService {
 
         Event saved = eventRepository.save(event);
 
-        return EventMapper.mapToFullDto(saved, 0, null); // change 0 to actual number of requests
+        Map<Long, Long> confirmedRequests = getConfirmedRequests(Set.of(event));
+
+        return EventMapper.mapToFullDto(
+                saved, confirmedRequests.getOrDefault(event.getId(), 0L), null);
     }
 
-    private Map<Long, Long> getStatsMapForEvents(
-            Page<Event> events, LocalDateTime from, LocalDateTime to) {
+    private Map<Long, Long> getStatsMapForEvents(Page<Event> events) {
         List<String> listOfUris =
                 events.stream().map(event -> EVENTS_URI.formatted(event.getId())).toList();
-        return getStatsForEvents(listOfUris, from, to).stream()
+        return getStatsForEvents(listOfUris).stream()
                 .collect(
                         Collectors.toMap(
                                 statsDto ->
@@ -247,10 +252,19 @@ public class EventServiceImpl implements EventService {
                                 ViewStatsDto::hits));
     }
 
-    private List<ViewStatsDto> getStatsForEvents(
-            List<String> uris, LocalDateTime from, LocalDateTime to) {
+    private Map<Long, Long> getConfirmedRequests(Set<Event> events) {
+        if (events.isEmpty()) {
+            return Map.of();
+        }
+
+        List<Long> eventIds = events.stream().map(Event::getId).toList();
+
+        return requestRepository.countConfirmedByEventIds(eventIds);
+    }
+
+    private List<ViewStatsDto> getStatsForEvents(List<String> uris) {
         try {
-            return statsClient.getStats(from, to, uris, true);
+            return statsClient.getStats(MINIMAL_LOCAL_DATE_TIME, LocalDateTime.now(), uris, true);
         } catch (Exception e) {
             log.error("Error during getting stats for events", e);
         }
@@ -264,7 +278,7 @@ public class EventServiceImpl implements EventService {
                     statsClient
                             .getStats(
                                     MINIMAL_LOCAL_DATE_TIME,
-                                    MAXIMUM_LOCAL_DATE_TIME,
+                                    LocalDateTime.now(),
                                     List.of(uri),
                                     true)
                             .getFirst();
