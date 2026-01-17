@@ -1,7 +1,9 @@
 package ru.practicum.event.repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventState;
@@ -86,4 +88,6 @@ public interface EventRepository
     Optional<Event> findByIdAndState(Long id, EventState state);
 
     Page<Event> findByInitiator_Id(Long initiatorId, Pageable pageable);
+
+    Set<Event> findAllByIdIn(Collection<Long> ids);
 }
