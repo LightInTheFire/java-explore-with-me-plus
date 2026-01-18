@@ -30,6 +30,7 @@ import ru.practicum.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -268,7 +269,7 @@ public class EventServiceImpl implements EventService {
     private List<ViewStatsDto> getStatsForEvents(List<String> uris, LocalDateTime startDate) {
         try {
             return statsClient.getStats(startDate, LocalDateTime.now(), uris, true);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             log.error("Error during getting stats for events", e);
         }
         return List.of();
@@ -285,7 +286,7 @@ public class EventServiceImpl implements EventService {
         } catch (NoSuchElementException e) {
             log.trace("No stats for event with id={} found", event.getId());
             statsDto = new ViewStatsDto(null, null, 0L);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             log.error("Error during getting stats for event with id={}", event.getId(), e);
             statsDto = new ViewStatsDto(null, null, null);
         }
