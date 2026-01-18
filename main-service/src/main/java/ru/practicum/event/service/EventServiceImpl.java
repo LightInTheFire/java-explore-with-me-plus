@@ -30,6 +30,7 @@ import ru.practicum.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private static final Duration MIN_TIME_BEFORE_EVENT = Duration.ofHours(2);
-    private static final LocalDateTime MINIMAL_LOCAL_DATE_TIME =
-            LocalDateTime.of(1000, 1, 1, 0, 0, 0);
     private static final String EVENTS_URI = "/events/%d";
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
@@ -238,9 +237,19 @@ public class EventServiceImpl implements EventService {
     }
 
     private Map<Long, Long> getStatsMapForEvents(Page<Event> events) {
+        if (events.isEmpty()) {
+            return Collections.emptyMap();
+        }
         List<String> listOfUris =
                 events.stream().map(event -> EVENTS_URI.formatted(event.getId())).toList();
-        return getStatsForEvents(listOfUris).stream()
+        LocalDateTime minimalPublishDate =
+                events.stream()
+                        .map(Event::getPublishedOn)
+                        .filter(Objects::nonNull)
+                        .min(LocalDateTime::compareTo)
+                        .orElse(LocalDateTime.of(1000, 1, 1, 1, 1));
+
+        return getStatsForEvents(listOfUris, minimalPublishDate).stream()
                 .collect(
                         Collectors.toMap(
                                 statsDto ->
@@ -262,30 +271,30 @@ public class EventServiceImpl implements EventService {
         return requestRepository.countConfirmedByEventIds(eventIds);
     }
 
-    private List<ViewStatsDto> getStatsForEvents(List<String> uris) {
+    private List<ViewStatsDto> getStatsForEvents(List<String> uris, LocalDateTime startDate) {
         try {
-            return statsClient.getStats(MINIMAL_LOCAL_DATE_TIME, LocalDateTime.now(), uris, true);
-        } catch (Exception e) {
+            return statsClient.getStats(startDate, LocalDateTime.now(), uris, true);
+        } catch (RestClientException e) {
             log.error("Error during getting stats for events", e);
         }
         return List.of();
     }
 
     private ViewStatsDto getStatsForEvent(Event event, String uri) {
+        if (event.getPublishedOn() == null) {
+            return new ViewStatsDto(null, null, null);
+        }
+
+        LocalDateTime startDate = event.getPublishedOn().minusSeconds(10);
+        LocalDateTime endDate = LocalDateTime.now().plusSeconds(10);
         ViewStatsDto statsDto;
+
         try {
-            statsDto =
-                    statsClient
-                            .getStats(
-                                    MINIMAL_LOCAL_DATE_TIME,
-                                    LocalDateTime.now(),
-                                    List.of(uri),
-                                    true)
-                            .getFirst();
+            statsDto = statsClient.getStats(startDate, endDate, List.of(uri), true).getFirst();
         } catch (NoSuchElementException e) {
             log.trace("No stats for event with id={} found", event.getId());
             statsDto = new ViewStatsDto(null, null, 0L);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             log.error("Error during getting stats for event with id={}", event.getId(), e);
             statsDto = new ViewStatsDto(null, null, null);
         }

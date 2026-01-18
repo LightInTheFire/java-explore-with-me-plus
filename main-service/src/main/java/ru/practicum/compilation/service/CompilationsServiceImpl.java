@@ -1,20 +1,17 @@
 package ru.practicum.compilation.service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import ru.practicum.client.StatsClient;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.compilation.mapper.CompilationsMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationsRepository;
-import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
@@ -35,12 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CompilationsServiceImpl implements CompilationsService {
-    private static final LocalDateTime MINIMAL_LOCAL_DATE_TIME =
-            LocalDateTime.of(1000, 1, 1, 0, 0, 0);
     private final CompilationsRepository compRepository;
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
-    private final StatsClient statsClient;
 
     @Override
     public Collection<CompilationDto> findAll(CompilationsPublicGetRequest getRequest) {
@@ -52,9 +46,8 @@ public class CompilationsServiceImpl implements CompilationsService {
                 page.stream().flatMap(c -> c.getEvents().stream()).collect(Collectors.toSet());
 
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
-        Map<Long, Long> views = getViews(events);
 
-        return page.stream().map(c -> toDto(c, confirmedRequests, views)).toList();
+        return page.stream().map(c -> toDto(c, confirmedRequests)).toList();
     }
 
     @Override
@@ -70,9 +63,8 @@ public class CompilationsServiceImpl implements CompilationsService {
         Set<Event> events = compilation.getEvents();
 
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
-        Map<Long, Long> views = getViews(events);
 
-        return toDto(compilation, confirmedRequests, views);
+        return toDto(compilation, confirmedRequests);
     }
 
     @Override
@@ -91,9 +83,8 @@ public class CompilationsServiceImpl implements CompilationsService {
         Compilation saved = compRepository.save(compilation);
 
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
-        Map<Long, Long> views = getViews(events);
 
-        return toDto(saved, confirmedRequests, views);
+        return toDto(saved, confirmedRequests);
     }
 
     @Override
@@ -129,13 +120,11 @@ public class CompilationsServiceImpl implements CompilationsService {
         Set<Event> actualEvents = updated.getEvents();
 
         Map<Long, Long> confirmedRequests = getConfirmedRequests(actualEvents);
-        Map<Long, Long> views = getViews(actualEvents);
 
-        return toDto(updated, confirmedRequests, views);
+        return toDto(updated, confirmedRequests);
     }
 
-    private CompilationDto toDto(
-            Compilation compilation, Map<Long, Long> confirmedRequests, Map<Long, Long> views) {
+    private CompilationDto toDto(Compilation compilation, Map<Long, Long> confirmedRequests) {
         List<EventShortDto> events =
                 compilation.getEvents().stream()
                         .map(
@@ -143,7 +132,7 @@ public class CompilationsServiceImpl implements CompilationsService {
                                         EventMapper.mapToShortDto(
                                                 event,
                                                 confirmedRequests.getOrDefault(event.getId(), 0L),
-                                                views.get(event.getId())))
+                                                null))
                         .toList();
 
         return CompilationsMapper.mapToDto(compilation, events);
@@ -171,32 +160,5 @@ public class CompilationsServiceImpl implements CompilationsService {
         List<Long> eventIds = events.stream().map(Event::getId).toList();
 
         return requestRepository.countConfirmedByEventIds(eventIds);
-    }
-
-    private Map<Long, Long> getViews(Set<Event> events) {
-        if (events.isEmpty()) {
-            return Map.of();
-        }
-
-        List<String> uris = events.stream().map(e -> "/events/%s".formatted(e.getId())).toList();
-
-        try {
-            List<ViewStatsDto> stats =
-                    statsClient.getStats(MINIMAL_LOCAL_DATE_TIME, LocalDateTime.now(), uris, true);
-
-            return stats.stream()
-                    .collect(
-                            Collectors.toMap(
-                                    s -> {
-                                        String uri = s.uri();
-                                        return Long.parseLong(
-                                                uri.substring(uri.lastIndexOf("/") + 1));
-                                    },
-                                    ViewStatsDto::hits));
-
-        } catch (Exception e) {
-            log.error("Error during getting stats for events", e);
-            return Map.of();
-        }
     }
 }

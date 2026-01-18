@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
-import ru.practicum.category.dto.UpdateCategoryDto;
 import ru.practicum.category.service.CategoryService;
 
 import org.springframework.http.HttpStatus;
@@ -29,7 +28,7 @@ public class CategoryAdminController {
 
     @PatchMapping("/{catId}")
     public CategoryDto updateCategory(
-            @PathVariable Long catId, @Valid @RequestBody UpdateCategoryDto updateCategoryDto) {
+            @PathVariable Long catId, @Valid @RequestBody NewCategoryDto updateCategoryDto) {
         log.info(
                 "Update category with id={} requested, updated category {}",
                 catId,
