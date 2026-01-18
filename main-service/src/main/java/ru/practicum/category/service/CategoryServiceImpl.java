@@ -4,7 +4,6 @@ import java.util.List;
 
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
-import ru.practicum.category.dto.UpdateCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
@@ -30,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto updateCategory(Long catId, UpdateCategoryDto updateCategoryDto) {
+    public CategoryDto updateCategory(Long catId, NewCategoryDto updateCategoryDto) {
         Category category =
                 categoryRepository
                         .findById(catId)
