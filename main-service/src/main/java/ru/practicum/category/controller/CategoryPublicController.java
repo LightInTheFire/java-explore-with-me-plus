@@ -2,6 +2,9 @@ package ru.practicum.category.controller;
 
 import java.util.Collection;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.service.CategoryService;
 
@@ -21,8 +24,8 @@ public class CategoryPublicController {
 
     @GetMapping
     public Collection<CategoryDto> getAllCategoriesPaged(
-            @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("View categories page by page requested from={}, size={}", from, size);
         return categoryService.getAllCategoriesPaged(from, size);
     }
