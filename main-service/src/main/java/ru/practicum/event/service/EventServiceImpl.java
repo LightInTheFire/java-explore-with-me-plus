@@ -40,8 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private static final Duration MIN_TIME_BEFORE_EVENT = Duration.ofHours(2);
-    private static final LocalDateTime MINIMAL_LOCAL_DATE_TIME =
-            LocalDateTime.of(1000, 1, 1, 0, 0, 0);
     private static final String EVENTS_URI = "/events/%d";
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
@@ -240,7 +238,12 @@ public class EventServiceImpl implements EventService {
     private Map<Long, Long> getStatsMapForEvents(Page<Event> events) {
         List<String> listOfUris =
                 events.stream().map(event -> EVENTS_URI.formatted(event.getId())).toList();
-        return getStatsForEvents(listOfUris).stream()
+        Optional<LocalDateTime> minimalPublishDate =
+                events.stream().map(Event::getPublishedOn).min(LocalDateTime::compareTo);
+
+        return getStatsForEvents(
+                        listOfUris, minimalPublishDate.orElse(LocalDateTime.of(1000, 1, 1, 1, 1)))
+                .stream()
                 .collect(
                         Collectors.toMap(
                                 statsDto ->
@@ -262,9 +265,9 @@ public class EventServiceImpl implements EventService {
         return requestRepository.countConfirmedByEventIds(eventIds);
     }
 
-    private List<ViewStatsDto> getStatsForEvents(List<String> uris) {
+    private List<ViewStatsDto> getStatsForEvents(List<String> uris, LocalDateTime startDate) {
         try {
-            return statsClient.getStats(MINIMAL_LOCAL_DATE_TIME, LocalDateTime.now(), uris, true);
+            return statsClient.getStats(startDate, LocalDateTime.now(), uris, true);
         } catch (Exception e) {
             log.error("Error during getting stats for events", e);
         }
@@ -277,10 +280,7 @@ public class EventServiceImpl implements EventService {
             statsDto =
                     statsClient
                             .getStats(
-                                    MINIMAL_LOCAL_DATE_TIME,
-                                    LocalDateTime.now(),
-                                    List.of(uri),
-                                    true)
+                                    event.getPublishedOn(), LocalDateTime.now(), List.of(uri), true)
                             .getFirst();
         } catch (NoSuchElementException e) {
             log.trace("No stats for event with id={} found", event.getId());
