@@ -237,14 +237,19 @@ public class EventServiceImpl implements EventService {
     }
 
     private Map<Long, Long> getStatsMapForEvents(Page<Event> events) {
+        if (events.isEmpty()) {
+            return Collections.emptyMap();
+        }
         List<String> listOfUris =
                 events.stream().map(event -> EVENTS_URI.formatted(event.getId())).toList();
-        Optional<LocalDateTime> minimalPublishDate =
-                events.stream().map(Event::getPublishedOn).min(LocalDateTime::compareTo);
+        LocalDateTime minimalPublishDate =
+                events.stream()
+                        .map(Event::getPublishedOn)
+                        .filter(Objects::nonNull)
+                        .min(LocalDateTime::compareTo)
+                        .orElse(LocalDateTime.of(1000, 1, 1, 1, 1));
 
-        return getStatsForEvents(
-                        listOfUris, minimalPublishDate.orElse(LocalDateTime.of(1000, 1, 1, 1, 1)))
-                .stream()
+        return getStatsForEvents(listOfUris, minimalPublishDate).stream()
                 .collect(
                         Collectors.toMap(
                                 statsDto ->
@@ -276,13 +281,16 @@ public class EventServiceImpl implements EventService {
     }
 
     private ViewStatsDto getStatsForEvent(Event event, String uri) {
+        if (event.getPublishedOn() == null) {
+            return new ViewStatsDto(null, null, null);
+        }
+
+        LocalDateTime startDate = event.getPublishedOn().minusSeconds(10);
+        LocalDateTime endDate = LocalDateTime.now().plusSeconds(10);
         ViewStatsDto statsDto;
+
         try {
-            statsDto =
-                    statsClient
-                            .getStats(
-                                    event.getPublishedOn(), LocalDateTime.now(), List.of(uri), true)
-                            .getFirst();
+            statsDto = statsClient.getStats(startDate, endDate, List.of(uri), true).getFirst();
         } catch (NoSuchElementException e) {
             log.trace("No stats for event with id={} found", event.getId());
             statsDto = new ViewStatsDto(null, null, 0L);
