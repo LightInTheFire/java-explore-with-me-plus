@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import ru.practicum.comment.dto.CommentDto;
-import ru.practicum.comment.dto.CommentRequestDto;
+import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.comment.service.*;
 
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ public class CommentPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto createComment(
             @PathVariable long userId,
-            @Valid @RequestBody CommentRequestDto newComment) {
+            @Valid @RequestBody NewCommentDto newComment) {
         CommentsCreateRequest request = new CommentsCreateRequest(userId, newComment);
         log.info("Create new comment requested");
         return commentService.createComment(request);
@@ -49,7 +49,7 @@ public class CommentPrivateController {
     public CommentDto updateComment(
             @PathVariable long userId,
             @PathVariable long commentId,
-            @Valid @RequestBody CommentRequestDto updateComment) {
+            @Valid @RequestBody NewCommentDto updateComment) {
 
         CommentsUpdateRequest request = new CommentsUpdateRequest(userId, commentId, updateComment);
 

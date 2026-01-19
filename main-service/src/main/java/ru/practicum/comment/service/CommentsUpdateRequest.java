@@ -1,5 +1,5 @@
 package ru.practicum.comment.service;
 
-import ru.practicum.comment.dto.CommentRequestDto;
+import ru.practicum.comment.dto.NewCommentDto;
 
-public record CommentsUpdateRequest(long userId, long commentId, CommentRequestDto updateComment) {}
+public record CommentsUpdateRequest(long userId, long commentId, NewCommentDto updateComment) {}
