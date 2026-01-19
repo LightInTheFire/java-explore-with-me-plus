@@ -35,13 +35,12 @@ public class CommentPrivateController {
         return commentService.getAllCommentsOfUserPaged(request);
     }
 
-    @PostMapping("/events/{eventId}/comments")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto createComment(
             @PathVariable long userId,
-            @PathVariable long eventId,
             @Valid @RequestBody CommentRequestDto newComment) {
-        CommentsCreateRequest request = new CommentsCreateRequest(userId, eventId, newComment);
+        CommentsCreateRequest request = new CommentsCreateRequest(userId, newComment);
         log.info("Create new comment requested");
         return commentService.createComment(request);
     }

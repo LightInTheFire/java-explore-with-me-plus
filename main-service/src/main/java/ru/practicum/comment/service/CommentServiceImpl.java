@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto createComment(CommentsCreateRequest request) {
-        Event event = getEventByIdOrThrow(request.eventId());
+        Event event = getEventByIdOrThrow(request.newComment().eventId());
         User user = getUserByIdOrThrow(request.userId());
 
         Comment newComment = CommentMapper.toEntity(request.newComment(), user, event);
@@ -94,6 +94,12 @@ public class CommentServiceImpl implements CommentService {
         comment.setEdited(true);
         Comment saved = commentRepository.save(comment);
         return CommentMapper.toCommentDto(saved, user);
+    }
+
+    @Override
+    public CommentDto getById(Long commentId) {
+        Comment comment = getCommentByIdOrThrow(commentId);
+        return CommentMapper.toCommentDto(comment, comment.getAuthor());
     }
 
     private Event getEventByIdOrThrow(Long eventId) {

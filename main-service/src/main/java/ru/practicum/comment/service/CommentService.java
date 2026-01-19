@@ -16,4 +16,6 @@ public interface CommentService {
     CommentDto createComment(CommentsCreateRequest request);
 
     CommentDto updateComment(CommentsUpdateRequest request);
+
+    CommentDto getById(Long commentId);
 }
