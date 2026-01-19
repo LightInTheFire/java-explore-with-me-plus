@@ -18,8 +18,7 @@ public class CommentPublicController {
     private final CommentService commentService;
 
     @GetMapping("/{commentId}")
-    public CommentDto getComments(
-            @PathVariable Long commentId) {
+    public CommentDto getComments(@PathVariable Long commentId) {
 
         log.info("Get comment by id={} requested", commentId);
         return commentService.getById(commentId);
