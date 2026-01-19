@@ -1,12 +1,14 @@
-package ru.practicum.comments.model;
+package ru.practicum.comment.model;
+
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
-import java.time.LocalDateTime;
+import lombok.experimental.FieldDefaults;
+import lombok.*;
 
 @Entity
 @Getter
@@ -14,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "category")
+@Table(name = "comment")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment {
 
