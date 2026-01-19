@@ -32,7 +32,7 @@ public class CommentPrivateController {
             @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Private get all comments requested by userId:{}", userId);
         CommentsPrivateGetRequest request = new CommentsPrivateGetRequest(userId, from, size);
-        return commentService.getAllCommentsPaged(request);
+        return commentService.getAllCommentsOfUserPaged(request);
     }
 
     @PostMapping("/events/{eventId}/comments")

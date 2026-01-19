@@ -1,8 +1,11 @@
 package ru.practicum.comment.mapper;
 
+import java.time.LocalDateTime;
+
 import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.comment.model.Comment;
+import ru.practicum.event.model.Event;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 
@@ -20,10 +23,7 @@ public class CommentMapper {
                 comment.isEdited());
     }
 
-    public Comment toEntity(NewCommentDto newCommentDto) {
-        String newCommentDtoText = newCommentDto.text();
-        Comment comment = new Comment();
-        comment.setText(newCommentDtoText);
-        return comment;
+    public Comment toEntity(NewCommentDto newCommentDto, User author, Event event) {
+        return new Comment(null, newCommentDto.text(), author, event, LocalDateTime.now(), false);
     }
 }

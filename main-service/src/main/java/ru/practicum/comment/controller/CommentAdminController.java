@@ -13,15 +13,15 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("admin/events/{eventId}/comments")
+@RequestMapping("admin/comments")
 public class CommentAdminController {
     private final CommentService commentService;
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable long eventId, @PathVariable long commentId) {
-        log.info("Admin delete comment requested for eventId={}, commentId={}", eventId, commentId);
+    public void deleteComment(@PathVariable long commentId) {
+        log.info("Admin delete comment requested for commentId={}", commentId);
 
-        commentService.deleteComment(eventId, commentId);
+        commentService.deleteComment(commentId);
     }
 }

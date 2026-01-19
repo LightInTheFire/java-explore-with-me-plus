@@ -7,9 +7,9 @@ import ru.practicum.comment.dto.CommentDto;
 public interface CommentService {
     Collection<CommentDto> getAllCommentsPaged(CommentsPublicGetRequest request);
 
-    Collection<CommentDto> getAllCommentsPaged(CommentsPrivateGetRequest request);
+    Collection<CommentDto> getAllCommentsOfUserPaged(CommentsPrivateGetRequest request);
 
-    void deleteComment(long eventId, long commentId);
+    void deleteComment(long commentId);
 
     void deleteCommentByUser(long userId, long commentId);
 
