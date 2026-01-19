@@ -22,11 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/{userId}")
+@RequestMapping("/users/{userId}/comments")
 public class CommentPrivateController {
     private final CommentService commentService;
 
-    @GetMapping("/comments")
+    @GetMapping
     public Collection<CommentDto> getAllCommentsPaged(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
@@ -45,7 +45,7 @@ public class CommentPrivateController {
         return commentService.createComment(request);
     }
 
-    @PatchMapping("/comments/{commentId}")
+    @PatchMapping("/{commentId}")
     public CommentDto updateComment(
             @PathVariable long userId,
             @PathVariable long commentId,
@@ -58,7 +58,7 @@ public class CommentPrivateController {
         return commentService.updateComment(request);
     }
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable long userId, @PathVariable long commentId) {
 
