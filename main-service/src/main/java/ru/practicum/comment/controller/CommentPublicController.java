@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/events/{eventId}/comments")
 public class CommentPublicController {
-    CommentService commentService;
+    private final CommentService commentService;
 
     @GetMapping
     public Collection<CommentDto> getComments(

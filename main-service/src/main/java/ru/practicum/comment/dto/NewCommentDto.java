@@ -1,6 +1,6 @@
 package ru.practicum.comment.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-public record NewCommentDto(@NotBlank @Max(500) String text) {}
+public record NewCommentDto(@NotBlank @Size(max = 500) String text) {}

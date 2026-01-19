@@ -24,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
@@ -91,6 +91,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         comment.setText(request.updateComment().text());
+        comment.setEdited(true);
         Comment saved = commentRepository.save(comment);
         return CommentMapper.toCommentDto(saved, user);
     }
